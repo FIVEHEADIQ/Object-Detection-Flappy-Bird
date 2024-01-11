@@ -31,15 +31,6 @@ cam_started = False
 selected_camera_index = -1
 selected_difficulty_index = -1
 
-# Disable printing
-class NoPrint:
-    def write(self, *args, **kwargs):
-        pass
-
-# Redirect stdout to null device
-sys.stdout = NoPrint()
-
-
 # Class for initializing camera
 class Camera(): # Make all the methods static, remove need for camera object?
     """A class to initialize a camera
@@ -460,7 +451,7 @@ class Application():
         return self.confirm_x <= self.mouse[0] <= self.confirm_x + self.confirm_width and self.confirm_y <= self.mouse[1] <= self.confirm_y + self.confirm_height
 
 
-    def calibrate(self, camera: Camera, selected_camera_index: int, patrick: Model_Pygame.Patrick):
+    def calibrate(self, camera: Camera, selected_camera_index: int, model: Model_Pygame.Model):
         """
         Displays the camera video as a test
 
@@ -483,7 +474,7 @@ class Application():
 
         # Draw the captured frame onto the screen
         # self.screen.blit(image, (0, 0))
-        patrick.recognize(self.screen, self.width, self.height)
+        model.recognize(self.screen, self.width, self.height)
         self.display_selected_camera(camera, selected_camera_index)
         self.display_back_button()
         self.display_confirm_button()
@@ -526,7 +517,7 @@ class Application():
         pass # Change frame rate, sound, hide background
 
 
-    def start_game(self, camera: Camera, selected_camera_index, selected_difficulty_index, patrick: Model_Pygame.Patrick):
+    def start_game(self, camera: Camera, selected_camera_index, selected_difficulty_index, model: Model_Pygame.Model):
         """
         Start the game
 
@@ -547,7 +538,7 @@ class Application():
 
         # Draw the captured frame onto the screen
         # self.screen.blit(self.image, (0, 0))
-        patrick.recognize(self.screen, self.width, self.height)
+        model.recognize(self.screen, self.width, self.height)
 
         self.display_pause_button()
 
@@ -725,7 +716,7 @@ class Application():
 # Main class
 app = Application()
 camera_obj = Camera()
-patrick = Model_Pygame.Patrick()
+model = Model_Pygame.Model()
 
 while True:
     if current_state == MAIN_MENU:
@@ -765,7 +756,7 @@ while True:
                     selected_camera_index = app.on_camera_option()
                 
     if current_state == CALIBRATION:
-        app.calibrate(camera_obj, selected_camera_index, patrick)
+        app.calibrate(camera_obj, selected_camera_index, model)
 
         for event in pygame.event.get():  
             if event.type == pygame.QUIT:  
@@ -804,7 +795,7 @@ while True:
                     current_state = MAIN_MENU
     
     if current_state == GAME_PLAY:
-        app.start_game(camera_obj, selected_camera_index, selected_difficulty_index, patrick)
+        app.start_game(camera_obj, selected_camera_index, selected_difficulty_index, model)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
