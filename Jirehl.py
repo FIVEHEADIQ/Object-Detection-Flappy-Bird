@@ -14,22 +14,7 @@ import os
 import Patrick
 import Model_Pygame
 
-# States
-MAIN_MENU = "main_menu"
-SELECT_CAMERA = "select_camera"
-CALIBRATION = "calibration"
-SELECT_DIFFICULTY = "select_difficulty"
-SELECT_SKINS = "skins"
-SETTINGS = "settings"
-GAME_PLAY = "game_play"
-PAUSE_MENU = "pause_menu"
-current_state = MAIN_MENU
-
-# Other declarations
 clock = pygame.time.Clock()
-cam_started = False
-selected_camera_index = -1
-selected_difficulty_index = -1
 
 class Application():
     """A class to create the application interface
