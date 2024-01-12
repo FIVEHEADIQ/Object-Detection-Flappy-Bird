@@ -1,5 +1,7 @@
 import Jirehl
 import Patrick
+import Jack
+import Yazen
 import pygame
 import Model_Pygame
 
@@ -24,6 +26,9 @@ selected_difficulty_index = -1
 if __name__ == "__main__":
     app = Jirehl.Application()
     camera_obj = Patrick.Camera()
+    # hitboxes = Jack.Movement()
+    # skins = Yazen.Skins()
+
     model = Model_Pygame.Model()
 
     while True:
@@ -103,7 +108,7 @@ if __name__ == "__main__":
                         current_state = MAIN_MENU
         
         if current_state == GAME_PLAY:
-            app.start_game(camera_obj, selected_camera_index, selected_difficulty_index, model)
+            app.start_game(camera_obj, model)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
