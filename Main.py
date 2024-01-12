@@ -16,7 +16,6 @@ current_state = MAIN_MENU
 
 
 # Other declarations
-clock = pygame.time.Clock()
 selected_camera_index = -1
 selected_difficulty_index = -1
 
