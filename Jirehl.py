@@ -10,8 +10,9 @@ import pygame.camera
 from pygame.constants import MOUSEBUTTONDOWN
 from pygame.display import set_allow_screensaver
 import pygame.locals
-import Model_Pygame
 import os
+import Patrick
+import Model_Pygame
 
 # States
 MAIN_MENU = "main_menu"
@@ -24,50 +25,11 @@ GAME_PLAY = "game_play"
 PAUSE_MENU = "pause_menu"
 current_state = MAIN_MENU
 
-
 # Other declarations
 clock = pygame.time.Clock()
 cam_started = False
 selected_camera_index = -1
 selected_difficulty_index = -1
-
-# Class for initializing camera
-class Camera(): # Make all the methods static, remove need for camera object?
-    """A class to initialize a camera
-    """
-    def __init__(self):
-        """Constructor
-        """
-        pygame.camera.init()
-        self.refresh_camera_list()
-    def get_cameras(self):
-        # self.cameras = pygame.camera.list_cameras() 
-        # print(self.cameras) # Testing
-        return self.cameras
-    def start_camera(self, selected_camera_index):
-        global cam_started
-        if not cam_started:
-            # print(selected_camera_index) # Getting -1 RESOLVED
-            self.cam = pygame.camera.Camera(self.get_cameras()[selected_camera_index], (720, 480))
-            self.cam.start()
-            cam_started = True
-    def stop_camera(self):
-        """
-        """
-        global cam_started
-        if cam_started:
-            cam_started = False
-            self.cam.stop()
-    def get_image(self):
-        """Returns a frame from the video feed
-        """
-        image = self.cam.get_image()
-        return pygame.transform.flip(image, True, False)
-    def refresh_camera_list(self):
-        """Loads a list of all available cameras
-        """
-        self.cameras = pygame.camera.list_cameras()
-
 
 class Application():
     """A class to create the application interface
@@ -106,7 +68,7 @@ class Application():
         pygame.display.update()
 
 
-    def display_main_menu(self, camera: Camera, selected_camera_index: int):
+    def display_main_menu(self, camera: Patrick.Camera, selected_camera_index: int):
         """Displays the main menu
 
         Args:
@@ -202,7 +164,7 @@ class Application():
         pass
 
 
-    def display_selected_camera(self, camera: Camera, selected_camera_index: int):
+    def display_selected_camera(self, camera: Patrick.Camera, selected_camera_index: int):
         """
         Displays the user selected camera
 
@@ -243,7 +205,7 @@ class Application():
         return self.selected_camera_x <= self.mouse[0] <= self.selected_camera_x + self.selected_camera_width and self.selected_camera_y <= self.mouse[1] <= self.selected_camera_y + self.selected_camera_height
 
 
-    def select_camera(self, camera: Camera, highlighted_camera: int):
+    def select_camera(self, camera: Patrick.Camera, highlighted_camera: int):
         """
         Displays a menu to select availble cameras
 
@@ -451,7 +413,7 @@ class Application():
         return self.confirm_x <= self.mouse[0] <= self.confirm_x + self.confirm_width and self.confirm_y <= self.mouse[1] <= self.confirm_y + self.confirm_height
 
 
-    def calibrate(self, camera: Camera, selected_camera_index: int, model: Model_Pygame.Model):
+    def calibrate(self, camera: Patrick.Camera, selected_camera_index: int, model: Model_Pygame.Model):
         """
         Displays the camera video as a test
 
@@ -517,7 +479,7 @@ class Application():
         pass # Change frame rate, sound, hide background
 
 
-    def start_game(self, camera: Camera, selected_camera_index, selected_difficulty_index, model: Model_Pygame.Model):
+    def start_game(self, camera: Patrick.Camera, selected_camera_index, selected_difficulty_index, model: Model_Pygame.Model):
         """
         Start the game
 
@@ -539,7 +501,6 @@ class Application():
         # Draw the captured frame onto the screen
         # self.screen.blit(self.image, (0, 0))
         model.recognize(self.screen, self.width, self.height)
-
         self.display_pause_button()
 
         # Update the display
@@ -711,118 +672,3 @@ class Application():
         surf = pygame.transform.smoothscale(surface, scale_size)
         surf = pygame.transform.smoothscale(surf, surf_size)
         return surf
-
-
-# Main class
-app = Application()
-camera_obj = Camera()
-model = Model_Pygame.Model()
-
-while True:
-    if current_state == MAIN_MENU:
-        app.display_main_menu(camera_obj, selected_camera_index)
-
-        for event in pygame.event.get():  
-            if event.type == pygame.QUIT:  
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if app.on_play_button():
-                    if selected_camera_index > -1:
-                        current_state = SELECT_DIFFICULTY
-                    else:
-                        current_state = SELECT_CAMERA
-                if app.on_skins_button():
-                    current_state = SELECT_SKINS
-                if app.on_selected_camera_button():
-                    current_state = SELECT_CAMERA
-
-    if current_state == SELECT_CAMERA:
-        app.select_camera(camera_obj, selected_camera_index)
-        camera_obj.stop_camera()
-
-        for event in pygame.event.get():  
-            if event.type == pygame.QUIT:  
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if app.on_back_button():
-                    current_state = MAIN_MENU
-
-                if app.on_confirm_button() and selected_camera_index > -1:
-                    app.display_loading_screen()
-                    current_state = CALIBRATION
-                else: 
-                    selected_camera_index = app.on_camera_option()
-                
-    if current_state == CALIBRATION:
-        app.calibrate(camera_obj, selected_camera_index, model)
-
-        for event in pygame.event.get():  
-            if event.type == pygame.QUIT:  
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if app.on_back_button():
-                    current_state = SELECT_CAMERA
-                if app.on_confirm_button():
-                    current_state = MAIN_MENU
-
-    if current_state == SELECT_DIFFICULTY:
-        app.select_difficulty(selected_difficulty_index)
-
-        for event in pygame.event.get():  
-            if event.type == pygame.QUIT:  
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if app.on_back_button():
-                    current_state = MAIN_MENU
-                if app.on_confirm_button() and selected_difficulty_index > -1:
-                    current_state = GAME_PLAY
-                else:
-                    selected_difficulty_index = app.on_difficulty()
-
-    if current_state == SELECT_SKINS:
-        app.select_skins()
-
-        for event in pygame.event.get():  
-            if event.type == pygame.QUIT:  
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if app.on_back_button():
-                    current_state = MAIN_MENU
-    
-    if current_state == GAME_PLAY:
-        app.start_game(camera_obj, selected_camera_index, selected_difficulty_index, model)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if app.on_pause_button():
-                    current_state = PAUSE_MENU
-            
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    current_state = PAUSE_MENU
-
-    if current_state == PAUSE_MENU:
-        app.display_pause_menu()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if app.on_resume_button():
-                    current_state = GAME_PLAY
-                if app.on_quit_button():
-                    current_state = MAIN_MENU
-            
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    current_state = GAME_PLAY
-# Return 0 for easy, 1 for medium, 2 for hard, 3 for professional
