@@ -9,6 +9,8 @@ import cv2
 import pygame
 import pygame.camera
 
+cam_started = False
+
 class Camera(): # Make all the methods static, remove need for camera object?
     """A class to initialize a camera
     """
@@ -18,11 +20,13 @@ class Camera(): # Make all the methods static, remove need for camera object?
         pygame.camera.init()
         self.refresh_camera_list()
     def get_cameras(self):
-        self.cameras = pygame.camera.list_cameras() 
+        # self.cameras = pygame.camera.list_cameras() 
+        # print(self.cameras) # Testing
         return self.cameras
     def start_camera(self, selected_camera_index):
         global cam_started
         if not cam_started:
+            # print(selected_camera_index) # Getting -1 RESOLVED
             self.cam = pygame.camera.Camera(self.get_cameras()[selected_camera_index], (720, 480))
             self.cam.start()
             cam_started = True
@@ -33,13 +37,15 @@ class Camera(): # Make all the methods static, remove need for camera object?
         if cam_started:
             cam_started = False
             self.cam.stop()
+    def get_image(self):
+        """Returns a frame from the video feed
+        """
+        image = self.cam.get_image()
+        return pygame.transform.flip(image, True, False)
     def refresh_camera_list(self):
         """Loads a list of all available cameras
         """
         self.cameras = pygame.camera.list_cameras()
-
-Model_Pygame.Model()
-
 
 def detect_up_down_movement(self, frame):
         # Convert the frame to grayscale
