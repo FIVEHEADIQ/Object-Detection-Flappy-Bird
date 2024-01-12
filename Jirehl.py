@@ -62,6 +62,14 @@ class Application():
 
 
     def display_loading_screen(self):
+        """Displays a loading screen for when there will be short wait times
+
+        Args:
+            None
+        
+        Returns:
+            None
+        """
         self.screen.fill(self.color)
         loading_text = self.bigfont.render("Loading...", True, self.color_dark)
         self.screen.blit(loading_text, (0, self.height - 60))
@@ -73,7 +81,7 @@ class Application():
 
         Args:
             Camera (camera): camera object
-            int (selected_camera_index): index of the user selected camera from the pygame list
+            int (selected_camera_index): List index of the user selected camera from the pygame list
 
         Returns:
             None
@@ -139,38 +147,46 @@ class Application():
 
 
     def on_play_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the play button or not
+        """Returns a boolean value if the cursor is on the 'play' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the button coordinates and dimensions
+            bool: If mouse coordinates are within the 'play' button coordinates and dimensions
         """
         return self.play_button_x <= self.mouse[0] <= self.play_button_x + self.play_button_width and self.play_button_y <= self.mouse[1] <= self.play_button_y + self.play_button_height
     
 
     def on_skins_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the skins button or not
+        """Returns a boolean value if the cursor is on the 'skins' button or not
+
+        Args:
+            None
+
+        Returns:
+            bool: If mouse coordinates are within the 'skins' button coordinates and dimensions
         """
         return self.skins_button_x <= self.mouse[0] <= self.skins_button_x + self.skins_button_width and self.skins_button_y <= self.mouse[1] <= self.skins_button_y + self.skins_button_height
 
     def on_settings_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the settings button or not
+        """Returns a boolean value if the cursor is on the 'settings' button or not
+
+        Args:
+            None
+
+        Returns:
+            bool: If mouse coordinates are within the 'settings' button coordinates and dimensions
         """
         pass
 
 
     def display_selected_camera(self, camera: Patrick.Camera, selected_camera_index: int):
-        """
-        Displays the user selected camera
+        """Displays the user selected camera
 
         Args:
             Camera (camera): Camera object
-            int (selected_camera_index): list index for chosen camera
+            int (selected_camera_index): List index for chosen camera
 
         Returns:
             None
@@ -193,25 +209,23 @@ class Application():
 
 
     def on_selected_camera_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the 'selected camera' button or not
+        """Returns a boolean value if the cursor is on the 'selected camera' button or not
 
         Args:
             None
 
         Returns:
-            bool: 
+            bool: If mouse coordinates are within the 'selected camera' button coordinates and dimensions
         """
         return self.selected_camera_x <= self.mouse[0] <= self.selected_camera_x + self.selected_camera_width and self.selected_camera_y <= self.mouse[1] <= self.selected_camera_y + self.selected_camera_height
 
 
     def select_camera(self, camera: Patrick.Camera, highlighted_camera: int):
-        """
-        Displays a menu to select availble cameras
+        """Displays a menu to select availble cameras
 
         Args:
-            Camera (camera): camera object
-            int (highlighted_camera): list index of camera currently selected (not confirmed)
+            Camera (camera): Camera object
+            int (highlighted_camera): List index of camera currently selected (not confirmed)
         
         Returns:
             None
@@ -261,15 +275,14 @@ class Application():
         pygame.display.update()
 
 
-    def on_camera_option(self) -> bool:
-        """
-        Returns the index of the camera option the cursor is on
+    def on_camera_option(self) -> int:
+        """Returns the index of the camera option the cursor is on
 
         Args:
             None
 
         Returns:
-            bool: 
+            int: List index of the camera option where the mouse coordinates are within its button coordinates and dimensions
         """
         for i in range(0, len(self.option_y_list)):
             if self.option_x <= self.mouse[0] <= self.option_x + self.option_width and self.option_y_list[i] <= self.mouse[1] <= self.option_y_list[i] + self.option_height:
@@ -278,11 +291,10 @@ class Application():
 
     
     def select_difficulty(self, highlighted_difficulty: int):
-        """
-        Displays a menu to select a difficulty
+        """Displays a menu to select a difficulty
 
         Args:
-            int (highlighted_difficulty): diffculty currently selected (not confirmed)
+            int (highlighted_difficulty): Diffculty currently selected (not confirmed)
 
         Returns:
             None
@@ -322,14 +334,13 @@ class Application():
 
 
     def on_difficulty(self) -> int:
-        """
-        Returns the index of the difficulty the cursor is on
+        """Returns the index of the difficulty the cursor is on
 
         Args:
             None
         
         Returns:
-            int: list index of selected difficulty
+            int: List index of the difficulty option where the mouse coordinates are within its button coordinates and dimensions
         """
         for i in range(0, len(self.difficulty_y_list)):
             if self.difficulty_x <= self.mouse[0] <= self.difficulty_x + self.difficulty_width and self.difficulty_y_list[i] <= self.mouse[1] <= self.difficulty_y_list[i] + self.difficulty_height:
@@ -339,8 +350,7 @@ class Application():
 
 
     def display_back_button(self):
-        """
-        Displays the 'back' button
+        """Displays the 'back' button
 
         Args:
             None
@@ -363,21 +373,19 @@ class Application():
         
 
     def on_back_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the 'back' button or not
+        """Returns a boolean value if the cursor is on the 'back' button or not
 
         Args:
             None
         
         Returns:
-            bool: 
+            bool: If mouse coordinates are within the 'back' button coordinates and dimensions
         """
         return self.back_x <= self.mouse[0] <= self.back_x + self.back_width and self.back_y <= self.mouse[1] <= self.back_y + self.back_height
 
 
     def display_confirm_button(self):
-        """
-        Displays the 'confirm' button
+        """Displays the 'confirm' button
 
         Args:
             None
@@ -400,26 +408,24 @@ class Application():
 
 
     def on_confirm_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the 'confirm' button or not
+        """Returns a boolean value if the cursor is on the 'confirm' button or not
 
         Args:
             None
         
             
         Returns:
-            bool:
+            bool: If mouse coordinates are within the 'confirm' button coordinates and dimensions
         """
         return self.confirm_x <= self.mouse[0] <= self.confirm_x + self.confirm_width and self.confirm_y <= self.mouse[1] <= self.confirm_y + self.confirm_height
 
 
     def calibrate(self, camera: Patrick.Camera, selected_camera_index: int, model: Model_Pygame.Model):
-        """
-        Displays the camera video as a test
+        """Displays the camera video as a test
 
         Args:
-            Camera (camera): camera object
-            int (selected_camera_index): list index for selected camera
+            Camera (camera): Camera object
+            int (selected_camera_index): List index for selected camera
 
         Returns:
             None
@@ -449,8 +455,7 @@ class Application():
 
 
     def select_skins(self):
-        """
-        Displays the skins menu
+        """Displays the skins menu
 
         Args:
             None
@@ -467,8 +472,7 @@ class Application():
     
 
     def settings(self):
-        """
-        Displays a menu to change settings
+        """Displays a menu to change settings
 
         Args:
             None
@@ -480,11 +484,10 @@ class Application():
 
 
     def start_game(self, camera: Patrick.Camera, selected_camera_index, selected_difficulty_index, model: Model_Pygame.Model):
-        """
-        Start the game
+        """Start the game
 
         Args:
-            Camera (camera): camera object
+            Camera (camera): Camera object
 
         Returns:
             None
@@ -511,8 +514,7 @@ class Application():
 
 
     def display_pause_button(self):
-        """
-        Displays the 'pause' button
+        """Displays the 'pause' button
 
         Args:
             None
@@ -533,21 +535,19 @@ class Application():
     
 
     def on_pause_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the 'pause' button or not
+        """Returns a boolean value if the cursor is on the 'pause' button or not
 
         Args:
             None
 
         Returns:
-            bool:
+            bool: If mouse coordinates are within the 'pause' button coordinates and dimensions
         """
         return self.pause_center[0] - self.pause_radius <= self.mouse[0] <= self.pause_center[0] + self.pause_radius and self.pause_center[1] - self.pause_radius <= self.mouse[1] <= self.pause_center[1] + self.pause_radius
 
 
     def display_pause_menu(self):
-        """
-        Displays a pause menu
+        """Displays a pause menu
 
         Args:
             None
@@ -614,34 +614,31 @@ class Application():
 
 
     def on_resume_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the 'resume' button or not
+        """Returns a boolean value if the cursor is on the 'resume' button or not
 
         Args:
             None
 
         Returns:
-            bool:
+            bool: If mouse coordinates are within the 'resume' button coordinates and dimensions
         """
         return self.resume_x <= self.mouse[0] <= self.resume_x + self.resume_width and self.resume_y <= self.mouse[1] <= self.resume_y + self.resume_height
 
 
     def on_quit_button(self) -> bool:
-        """
-        Returns a boolean value if the cursor is on the 'quit' button or not
+        """Returns a boolean value if the cursor is on the 'quit' button or not
 
         Args:
             None
 
         Returns:
-            bool:
+            bool: If mouse coordinates are within the 'quit' button coordinates and dimensions
         """
         return self.quit_x <= self.mouse[0] <= self.quit_x + self.quit_width and self.quit_y <= self.mouse[1] <= self.quit_y + self.quit_height
 
 
     def countdown(self):
-        """
-        Display a countdown before starting or resuming the game
+        """Displays a countdown before starting or resuming the game
 
         Args:
             None
@@ -653,16 +650,14 @@ class Application():
 
 
     def blur_surface(self, surface: pygame.surface.Surface, amt: int): # Copy pasted from the internet
-        """
-        Blur the given surface by the given 'amount'.  Only values 1 and greater
-        are valid.  Value 1 = no blur.
+        """Blur the given surface by the given 'amount'.  Only values 1 and greater are valid.  Value 1 = no blur.
 
         Args:
-            pygame.surface.Surface (surface): surface to blur
-            int (amt): blur value
+            pygame.surface.Surface (surface): Surface to blur
+            int (amt): Blur value
 
         Returns:
-            pygame.surface.Surface: blurred surface
+            pygame.surface.Surface: Blurred surface
         """
         if amt < 1.0:
             raise ValueError("Arg 'amt' must be greater than 1.0, passed in value is %s"%amt)
