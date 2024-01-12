@@ -5,10 +5,10 @@ import numpy as np
 from ultralytics import YOLO
 
 
-class Patrick:
+class Model:
     def __init__(self):
         # Opening the file in read mode
-        my_file = open("coco.txt", "r")
+        my_file = open("utils/coco.txt", "r")
         # Reading the file
         data = my_file.read()
         # Replacing and splitting the text when newline ('\n') is seen.
