@@ -12,6 +12,8 @@ from pygame.display import set_allow_screensaver
 import pygame.locals
 import os
 import Patrick
+import Yazen
+import Jack
 import Model_Pygame
 
 clock = pygame.time.Clock()
@@ -416,7 +418,7 @@ class Application():
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
-        camera.start_camera(selected_camera_index)
+        # camera.start_camera(selected_camera_index)
         # image = camera.get_image()
 
         # Resize the captured frame to fit the screen
@@ -468,7 +470,7 @@ class Application():
         pass # Change frame rate, sound, hide background
 
 
-    def start_game(self, camera: Patrick.Camera, selected_camera_index, selected_difficulty_index, model: Model_Pygame.Model):
+    def start_game(self, camera: Patrick.Camera, model: Model_Pygame.Model):
         """Start the game
 
         Args:
@@ -631,6 +633,9 @@ class Application():
         Returns:
             None
         """
+        self.screen.fill(self.color_dark)
+        for i in range(1, 4):
+            pass
         pass # 3, 2, 1...
 
 
