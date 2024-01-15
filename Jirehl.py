@@ -11,10 +11,12 @@ from pygame.constants import MOUSEBUTTONDOWN
 from pygame.display import set_allow_screensaver
 import pygame.locals
 import os
+import Main
 import Patrick
 import Yazen
 import Jack
 import Model_Pygame
+import Hitboxes
 
 clock = pygame.time.Clock()
 
@@ -44,6 +46,8 @@ class Application():
         # self.smallfont = pygame.font.SysFont('Corbel', 20)  # OG corbel, 20
         self.bigfont = pygame.font.SysFont('PressStart2P', 20) # OG corbel, 50
         self.smallfont = pygame.font.SysFont('PressStart2P', 8)  # OG corbel, 20
+
+        self.frame_rates = ["15", "30", "45", "60"]
 
         self.display_loading_screen()
 
@@ -94,7 +98,7 @@ class Application():
         # Play button
         play_button_text = self.bigfont.render('Play' , True , self.color)
 
-        self.play_button_width = 140
+        self.play_button_width = 155
         self.play_button_height = 45
         self.play_button_x = self.width/2 - self.play_button_width/2
         self.play_button_y = self.height/2
@@ -106,11 +110,11 @@ class Application():
         else:
             pygame.draw.rect(self.screen, self.color_dark, play_button_rect)
         
-        self.screen.blit(play_button_text, (self.play_button_x + self.play_button_width/5, self.play_button_y))
+        self.screen.blit(play_button_text, (self.play_button_x + self.play_button_width/4, self.play_button_y))
         
 
         # Skins button
-        self.skins_button_width = 140
+        self.skins_button_width = 155
         self.skins_button_height = 45
         self.skins_button_x = self.width/2 - self.skins_button_width/2
         self.skins_button_y = self.height/2 + 75
@@ -123,10 +127,25 @@ class Application():
             pygame.draw.rect(self.screen, self.color_dark, self.skins_button_rect)
 
         skins_button_text = self.bigfont.render("Skins", True, self.color)
-        self.screen.blit(skins_button_text, (self.skins_button_x + self.skins_button_width/8, self.skins_button_y))
+        self.screen.blit(skins_button_text, (self.skins_button_x + self.skins_button_width/6, self.skins_button_y))
 
 
         # Settings button
+        settings_button_text = self.bigfont.render("Settings", True, self.color)
+
+        self.settings_button_width = 155
+        self.settings_button_height = 45
+        self.settings_button_x = self.width/2 - self.settings_button_width/2
+        self.settings_button_y = self.height/2 + 150
+
+        self.settings_button_rect = [self.settings_button_x, self.settings_button_y, self.settings_button_width, self.settings_button_height]
+
+        if self.on_settings_button():
+            pygame.draw.rect(self.screen, self.color_light, self.settings_button_rect)
+        else:
+            pygame.draw.rect(self.screen, self.color_dark, self.settings_button_rect)
+
+        self.screen.blit(settings_button_text, (self.settings_button_x, self.settings_button_y))
 
         pygame.display.update()
 
@@ -165,7 +184,7 @@ class Application():
         Returns:
             bool: If mouse coordinates are within the 'settings' button coordinates and dimensions
         """
-        pass
+        return self.settings_button_x <= self.mouse[0] <= self.settings_button_x + self.settings_button_width and self.settings_button_y <= self.mouse[1] <= self.settings_button_y + self.settings_button_height
 
 
     def display_selected_camera(self, camera: Patrick.Camera, selected_camera_index: int):
@@ -407,7 +426,7 @@ class Application():
         return self.confirm_x <= self.mouse[0] <= self.confirm_x + self.confirm_width and self.confirm_y <= self.mouse[1] <= self.confirm_y + self.confirm_height
 
 
-    def calibrate(self, camera: Patrick.Camera, selected_camera_index: int, model: Model_Pygame.Model):
+    def calibrate(self, camera: Patrick.Camera, selected_camera_index: int, frame_rate_index):
         """Displays the camera video as a test
 
         Args:
@@ -418,11 +437,7 @@ class Application():
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
-        # camera.start_camera(selected_camera_index)
-        # image = camera.get_image()
-
-        # Resize the captured frame to fit the screen
-        # image = pygame.transform.scale(image, (self.width, self.height))
+        model = camera.get_model()
 
         # Fill the entire window with the background color
         self.screen.fill(self.color)
@@ -438,7 +453,7 @@ class Application():
         pygame.display.update()
 
         # Cap the frame rate
-        clock.tick(60)
+        clock.tick(self.get_frame_rate(frame_rate_index))
 
 
     def select_skins(self):
@@ -458,7 +473,7 @@ class Application():
         pygame.display.update()
     
 
-    def settings(self):
+    def display_settings(self, highlighted_settings_option):
         """Displays a menu to change settings
 
         Args:
@@ -467,10 +482,102 @@ class Application():
         Returns:
             None
         """
-        pass # Change frame rate, sound, hide background
+        # Change frame rate, sound, hide background
+        self.mouse = pygame.mouse.get_pos()
+
+        # Change frame rate
+        self.screen.fill(self.color)
+        settings_options = ["Frame rate", "Background", "Resolution", "Audio"]
+        self.display_back_button()
+        self.display_confirm_button()
+
+        settings_options_text = self.bigfont.render("Settings", True, self.color_dark)
+        self.screen.blit(settings_options_text, (self.width/2 - self.width/4, self.height/12))
+
+        increment = 0
+
+        self.settings_option_x = self.width/2 - self.width/4
+        self.settings_option_y_list = []
+        self.settings_option_width = 360
+        self.settings_option_height = 40
+
+        for settings_option in settings_options:
+            self.settings_option_y = self.height/4 + increment
+            increment += 75
+            self.settings_option_rect = [self.settings_option_x, self.settings_option_y, self.settings_option_width, self.settings_option_height]
+
+            self.settings_option_y_list.append(self.settings_option_y)
+
+            if self.on_settings_option() == (increment - 75) / 75 or (increment - 75) / 75 == highlighted_settings_option:
+                pygame.draw.rect(self.screen, self.color_light, self.settings_option_rect)
+            else:
+                pygame.draw.rect(self.screen, self.color_dark, self.settings_option_rect)
+            
+            settings_option = self.bigfont.render(settings_option, True, self.color)
+            self.screen.blit(settings_option, (self.settings_option_x, self.settings_option_y))
+
+        pygame.display.update()
 
 
-    def start_game(self, camera: Patrick.Camera, model: Model_Pygame.Model):
+    def on_settings_option(self):
+        for i in range(0, len(self.settings_option_y_list)):
+            if self.settings_option_x <= self.mouse[0] <= self.settings_option_x + self.settings_option_width and self.settings_option_y_list[i] <= self.mouse[1] <= self.settings_option_y_list[i] + self.settings_option_height:
+                # pass # Return numbers
+                return i
+        return -1
+
+
+    def select_frame_rate(self, highlighted_frame_rate_option):
+        self.mouse = pygame.mouse.get_pos()
+
+        # Change frame rate
+        self.screen.fill(self.color)
+        # self.frame_rates = ["15", "30", "45", "60"] # Moved to constructor
+        self.display_back_button()
+        self.display_confirm_button()
+
+        frame_rate_text = self.bigfont.render("Select a Frame Rate: ", True, self.color_dark)
+        self.screen.blit(frame_rate_text, (self.width/2 - self.width/4, self.height/12))
+
+        increment = 0
+
+        self.frame_rate_option_x = self.width/2 - self.width/4
+        self.frame_rate_option_y_list = []
+        self.frame_rate_option_width = 360
+        self.frame_rate_option_height = 40
+
+        for frame_rate in self.frame_rates:
+            self.frame_rate_option_y = self.height/4 + increment
+            increment += 75
+            self.frame_rate_option_rect = [self.frame_rate_option_x, self.frame_rate_option_y, self.frame_rate_option_width, self.frame_rate_option_height]
+
+            self.frame_rate_option_y_list.append(self.frame_rate_option_y)
+
+            if self.on_frame_rate_option() == (increment - 75) / 75 or (increment - 75) / 75 == highlighted_frame_rate_option:
+                pygame.draw.rect(self.screen, self.color_light, self.frame_rate_option_rect)
+            else:
+                pygame.draw.rect(self.screen, self.color_dark, self.frame_rate_option_rect)
+            
+            frame_rate = self.bigfont.render(frame_rate, True, self.color)
+            self.screen.blit(frame_rate, (self.frame_rate_option_x, self.frame_rate_option_y))
+
+        pygame.display.update()
+
+
+
+    def on_frame_rate_option(self):
+        for i in range(0, len(self.frame_rate_option_y_list)):
+            if self.frame_rate_option_x <= self.mouse[0] <= self.frame_rate_option_x + self.frame_rate_option_width and self.frame_rate_option_y_list[i] <= self.mouse[1] <= self.frame_rate_option_y_list[i] + self.frame_rate_option_height:
+                # pass # Return numbers
+                return i
+        return -1
+    
+
+    def get_frame_rate(self, index):
+        return int(self.frame_rates[index])
+    
+
+    def start_game(self, camera: Patrick.Camera, frame_rate_index, game: Hitboxes.Game_play):
         """Start the game
 
         Args:
@@ -480,24 +587,29 @@ class Application():
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
+        model = camera.get_model()
         # self.image = camera.get_image()
 
         # Resize the captured frame to fit the screen
         # self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
         # Fill the entire window with the background color
-        self.screen.fill(self.color)
+        # self.screen.fill(self.color)
 
         # Draw the captured frame onto the screen
         # self.screen.blit(self.image, (0, 0))
         model.recognize(self.screen, self.width, self.height)
+        game.bird_hitbox(self.screen, model)
+
+        game.pipe_hitboxes(self.screen)
+
         self.display_pause_button()
 
         # Update the display
         pygame.display.update()
 
         # Cap the frame rate
-        clock.tick(60)
+        clock.tick(self.get_frame_rate(frame_rate_index))
 
 
     def display_pause_button(self):
@@ -545,21 +657,7 @@ class Application():
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
         # self.image = camera.get_image()
         self.image = self.blur_surface(self.screen, 25)
-
-        # Resize the captured frame to fit the screen
-        # self.image = pygame.transform.scale(self.image, (self.width, self.height)) # take last frame
-
-        # Fill the entire window with the background color
-        # self.screen.fill(self.color)
-
-        # Draw the captured frame onto the screen
         self.screen.blit(self.image, (0, 0))
-        # pygame.transform.smoothscale(self.screen, (1, 1))
-        # pygame.transform.smoothscale(self.screen, (720, 480))
-        # self.display_selected_camera(camera, selected_camera_index)
-        # self.display_back_button()
-        # self.display_confirm_button()
-        # self.display_pause_button()
 
 
         # Resume button
@@ -578,20 +676,7 @@ class Application():
         self.screen.blit(resume_text, (self.resume_x, self.resume_y))
 
 
-        # Quit button
-        self.quit_width = 160
-        self.quit_height = 45
-        self.quit_x = self.width/2 - self.quit_width/2
-        self.quit_y = self.height/2 
-        self.quit_rect = [self.quit_x, self.quit_y, self.quit_width, self.quit_height]
-
-        if self.on_quit_button():
-            pygame.draw.rect(self.screen, self.color_light, self.quit_rect)
-        else:
-            pygame.draw.rect(self.screen, self.color_dark, self.quit_rect)
-
-        quit_text = self.bigfont.render("Quit", True, self.color)
-        self.screen.blit(quit_text, (self.quit_x, self.quit_y))
+        self.display_quit_button()
 
         # Update the display
         pygame.display.update()
@@ -610,6 +695,22 @@ class Application():
             bool: If mouse coordinates are within the 'resume' button coordinates and dimensions
         """
         return self.resume_x <= self.mouse[0] <= self.resume_x + self.resume_width and self.resume_y <= self.mouse[1] <= self.resume_y + self.resume_height
+
+
+    def display_quit_button(self):
+        self.quit_width = 160
+        self.quit_height = 45
+        self.quit_x = self.width/2 - self.quit_width/2
+        self.quit_y = self.height/2 
+        self.quit_rect = [self.quit_x, self.quit_y, self.quit_width, self.quit_height]
+
+        if self.on_quit_button():
+            pygame.draw.rect(self.screen, self.color_light, self.quit_rect)
+        else:
+            pygame.draw.rect(self.screen, self.color_dark, self.quit_rect)
+
+        quit_text = self.bigfont.render("Quit", True, self.color)
+        self.screen.blit(quit_text, (self.quit_x, self.quit_y))
 
 
     def on_quit_button(self) -> bool:
@@ -633,10 +734,30 @@ class Application():
         Returns:
             None
         """
-        self.screen.fill(self.color_dark)
-        for i in range(1, 4):
-            pass
-        pass # 3, 2, 1...
+        start_time = pygame.time.get_ticks()
+        delay_duration = 1000
+        i = 3
+        while i >= 0:
+            self.image = self.blur_surface(self.screen, 25)
+            self.screen.blit(self.image, (0, 0))
+            # number = self.bigfont.render(str(i), True, self.color)
+            start = self.bigfont.render("Go!", True, self.color)
+
+            # Calculate elapsed time
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - start_time
+
+            # Check if the desired delay has passed
+            if elapsed_time >= delay_duration:
+                i -= 1
+                # Reset start time for the next delay
+                start_time = pygame.time.get_ticks()
+            number = self.bigfont.render(str(i), True, self.color)
+            if i == 0:
+                self.screen.blit(start, (self.width/2, self.height/2))
+            elif i > 0:
+                self.screen.blit(number, (self.width/2, self.height/2))
+            pygame.display.update()
 
 
     def blur_surface(self, surface: pygame.surface.Surface, amt: int): # Copy pasted from the internet
@@ -657,3 +778,57 @@ class Application():
         surf = pygame.transform.smoothscale(surface, scale_size)
         surf = pygame.transform.smoothscale(surf, surf_size)
         return surf
+
+
+    def display_game_over_menu(self):
+        """Displays the main menu
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.mouse = pygame.mouse.get_pos() # (x,y) tuple
+        self.screen.fill(self.color)
+
+        # Title
+        game_over_text = self.bigfont.render("Game over", True, self.color)
+
+        game_over_width = 400
+        game_over_height = 45
+        game_over_x = self.width/2 - game_over_width/2
+        game_over_y = self.height/14 + game_over_height/2
+
+        game_over_rect = [game_over_x, game_over_y, game_over_width, game_over_height]
+
+        pygame.draw.rect(self.screen, self.color_light, game_over_rect)
+        self.screen.blit(game_over_text, (game_over_x, game_over_y))
+
+
+        # retry button
+        self.retry_width = 160
+        self.retry_height = 45
+        self.retry_x = self.width/2 - self.retry_width/2
+        self.retry_y = self.height/2 - 70
+        self.retry_rect = [self.retry_x, self.retry_y, self.retry_width, self.retry_height]
+
+        if self.on_retry_button():
+            pygame.draw.rect(self.screen, self.color_light, self.retry_rect)
+        else:
+            pygame.draw.rect(self.screen, self.color_dark, self.retry_rect)
+        
+        retry_text = self.bigfont.render("Retry", True, self.color)
+        self.screen.blit(retry_text, (self.retry_x, self.retry_y))
+
+
+        self.display_quit_button()
+
+
+        pygame.display.update()
+
+    
+    def on_retry_button(self) -> bool:
+        return self.retry_x <= self.mouse[0] <= self.retry_x + self.retry_width and self.retry_y <= self.mouse[1] <= self.retry_y + self.retry_height
+
+      # destination_surface.blit(source_surface, dest_position, area=None, special_flags=0)
