@@ -6,7 +6,7 @@ from ultralytics import YOLO
 
 
 class Model:
-    def __init__(self):
+    def __init__(self, camera_index):
         # Opening the file in read mode
         my_file = open("utils/coco.txt", "r")
         # Reading the file
@@ -22,11 +22,11 @@ class Model:
         self.model = YOLO("weights/yolov8n.pt", "v8")
 
         # Vals to resize video frames | small frame optimize the run
-        frame_wid = 640
-        frame_hyt = 480
+        frame_wid = 180 # 640 or 540
+        frame_hyt = 120 # 480 or 360
 
         # OpenCV camera capture
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(camera_index)
         self.cap.set(cv2.CAP_PROP_FPS, 60)
         if not self.cap.isOpened():
             print("Cannot open camera")
@@ -46,37 +46,40 @@ class Model:
 
         # Convert tensor array to numpy
         DP = detect_params[0].numpy()
-        print(DP)
+        # print(DP)
 
         if len(DP) != 0:
             for i in range(len(detect_params[0])):
-                print(i)
+                # print(i)
 
                 boxes = detect_params[0].boxes
                 box = boxes[i]  # returns one box
                 clsID = box.cls.numpy()[0]
-                conf = box.conf.numpy()[0]
-                bb = box.xyxy.numpy()[0]
 
-                cv2.rectangle(
-                    frame,
-                    (int(bb[0]), int(bb[1])),
-                    (int(bb[2]), int(bb[3])),
-                    self.detection_colors[int(clsID)],
-                    3,
-                )
+                # Check if the detected object is a person
+                if self.class_list[int(clsID)] == "person":
+                    conf = box.conf.numpy()[0]
+                    self.bb = box.xyxy.numpy()[0]
 
-                # Display class name and confidence
-                font = cv2.FONT_HERSHEY_COMPLEX
-                cv2.putText(
-                    frame,
-                    self.class_list[int(clsID)] + " " + str(round(conf, 3)) + "%",
-                    (int(bb[0]), int(bb[1]) - 10),
-                    font,
-                    1,
-                    (255, 255, 255),
-                    2,
-                )
+                    cv2.rectangle(
+                        frame,
+                        (int(self.bb[0]), int(self.bb[1])),
+                        (int(self.bb[2]), int(self.bb[3])),
+                        self.detection_colors[int(clsID)],
+                        3,
+                    )
+
+                    # Display class name and confidence
+                    # font = cv2.FONT_HERSHEY_COMPLEX
+                    # cv2.putText(
+                    #     frame,
+                    #     self.class_list[int(clsID)] + " " + str(round(conf, 3)) + "%",
+                    #     (int(self.bb[0]), int(self.bb[1]) - 10),
+                    #     font,
+                    #     1,
+                    #     (255, 255, 255),
+                    #     2,
+                    # )
 
         # Resize frame to match Pygame display resolution
         frame = cv2.resize(frame, (screen_width, screen_height))
@@ -92,3 +95,20 @@ class Model:
 
         # Display the resulting frame
         screen.blit(frame_surface, (0, 0))
+
+        return frame_surface
+
+    def stop(self):
+        self.cap.release()    
+
+    def get_y_pos(self):
+        """Documentation
+        """
+        
+        """
+        bb[0]: x-coordinate of the top-left corner of the bounding box.
+        bb[1]: y-coordinate of the top-left corner of the bounding box.
+        bb[2]: x-coordinate of the bottom-right corner of the bounding box.
+        bb[3]: y-coordinate of the bottom-right corner of the bounding box.
+        """
+        return self.bb[1]
