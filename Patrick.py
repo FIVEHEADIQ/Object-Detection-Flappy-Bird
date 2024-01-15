@@ -27,16 +27,17 @@ class Camera(): # Make all the methods static, remove need for camera object?
         global cam_started
         if not cam_started:
             # print(selected_camera_index) # Getting -1 RESOLVED
-            self.cam = pygame.camera.Camera(self.get_cameras()[selected_camera_index], (720, 480))
-            self.cam.start()
+            self.model = Model_Pygame.Model(selected_camera_index)
             cam_started = True
+    def get_model(self):
+        return self.model
     def stop_camera(self):
         """
         """
         global cam_started
         if cam_started:
             cam_started = False
-            self.cam.stop()
+            self.model.stop()
     def get_image(self):
         """Returns a frame from the video feed
         """
