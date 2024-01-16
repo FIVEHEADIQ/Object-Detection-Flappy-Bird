@@ -11,6 +11,7 @@ class Game_play:
         self.pipe_nums = pipe_nums
         self.bird_x = 200
         self.game_resetted = False
+        self.is_alive = True
 
         self.score = 0
 
@@ -41,8 +42,13 @@ class Game_play:
 
             pygame.draw.rect(screen, self.color, (pipe_x, lower_pipe_y, self.pipe_width, self.pipe_height))
 
-            self.collision(pipe_x, self.bird_x, self.pipe_width, pipe_gap_y, self.bird_y, lower_pipe_y)
+            
+            if self.collision(pipe_x, self.bird_x, self.pipe_width, pipe_gap_y, self.bird_y, lower_pipe_y):
+                is_alive = False
             pipe_x -= self.speed
+
+    def check_if_alive(self):
+        return is_alive
 
 
     def collision_x(self, pipe_x, bird_x, pipe_width):
