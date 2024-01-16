@@ -23,6 +23,7 @@ class Game_play:
 
     def pipe_hitboxes(self, screen):
         for i in range(0, self.pipe_nums):
+            pipe_x: int;
             if self.num_resetted <= self.pipe_nums:
                 pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
                 pipe_x = 720 + 180 * self.pipe_nums #figure out a way to run this only once
