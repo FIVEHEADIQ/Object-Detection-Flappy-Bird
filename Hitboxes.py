@@ -41,7 +41,7 @@ class Game_play:
 
             pygame.draw.rect(screen, self.color, (pipe_x, lower_pipe_y, self.pipe_width, self.pipe_height))
 
-            self.collision()
+            self.collision(pipe_x, self.bird_x, self.pipe_width, pipe_gap_y, self.bird_y, lower_pipe_y)
             pipe_x -= self.speed
 
 
