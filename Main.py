@@ -108,7 +108,7 @@ if __name__ == "__main__":
                     if app.on_confirm_button() and selected_difficulty_index > -1:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(3)
+                        game = Hitboxes.Game_play(selected_difficulty_index)
                     else:
                         selected_difficulty_index = app.on_difficulty()
 
@@ -157,7 +157,7 @@ if __name__ == "__main__":
                     if app.on_retry_button():
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play()
+                        game = Hitboxes.Game_play(selected_difficulty_index)
                     if app.on_quit_button():
                         current_state = MAIN_MENU
                 
@@ -165,7 +165,7 @@ if __name__ == "__main__":
                     if event.key == pygame.K_SPACE:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(3)
+                        game = Hitboxes.Game_play(selected_difficulty_index)
 
         if current_state == PAUSE_MENU:
             app.display_pause_menu()
