@@ -26,6 +26,7 @@ class Game_play:
             if not self.game_resetted:
                 pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
                 pipe_x = 720 + 180 * self.pipe_nums #figure out a way to run this only once
+                self.game_resetted = True
             if pipe_x < -self.pipe_width: 
                 pipe_x = 720 # Change
                 pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
