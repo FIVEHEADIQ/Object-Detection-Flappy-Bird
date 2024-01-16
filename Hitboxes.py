@@ -6,10 +6,8 @@ class Game_play:
     def __init__(self, pipe_nums):
         self.speed = 20
         self.pipe_width = 45
-        self.pipe_x = 720 # Change somehow
         self.pipe_height = 720
         self.pipe_gap = 100
-        self.pipe_gap_y = 140
         self.pipe_nums = pipe_nums
         self.bird_x = 200
         self.game_resetted = False
@@ -25,7 +23,7 @@ class Game_play:
     def pipe_hitboxes(self, screen):
         for i in range(0, self.pipe_nums):
             if not self.game_resetted:
-                
+                pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
                 pipe_x = 720 + 180 * self.pipe_nums #figure out a way to run this only once
             if pipe_x < -self.pipe_width: 
                 pipe_x = 720 # Change
@@ -58,12 +56,12 @@ class Game_play:
         return self.collision_x(pipe_x, bird_x, pipe_width) and self.collision_y(pipe_gap_y, bird_y, lower_pipe_y)
     
 
-    def track_score(self):
-        if self.passed_pipe == False:
-            if self.pipe_x + self.pipe_width/2 <= self.bird_x:
-                self.score += 1
-                self.passed_pipe = True
-                print(self.score)
+    # def track_score(self):
+    #     if self.passed_pipe == False:
+    #         if self.pipe_x + self.pipe_width/2 <= self.bird_x:
+    #             self.score += 1
+    #             self.passed_pipe = True
+    #             print(self.score)
 
     def display_score(self):
         pass
