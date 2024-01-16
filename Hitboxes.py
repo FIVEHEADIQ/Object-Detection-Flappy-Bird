@@ -3,15 +3,16 @@ import pygame
 import random
 
 class Game_play:
-    def __init__(self):
+    def __init__(self, pipe_nums):
         self.speed = 20
         self.pipe_width = 45
         self.pipe_x = 720 # Change somehow
         self.pipe_height = 720
         self.pipe_gap = 100
         self.pipe_gap_y = 140
-
+        self.pipe_nums = pipe_nums
         self.bird_x = 200
+        self.game_resetted = False
 
         self.score = 0
 
@@ -22,34 +23,39 @@ class Game_play:
         pygame.draw.circle(screen, self.color, (self.bird_x, self.bird_y), 15) # Color OG: 0, 0, 6
 
     def pipe_hitboxes(self, screen):
-        if self.pipe_x < -self.pipe_width: 
-            self.pipe_x = 720 # Change
-            self.pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
-            self.passed_pipe = False
+        for i in range(0, self.pipe_nums):
+            if not self.game_resetted:
+                
+                pipe_x = 720 + 180 * self.pipe_nums #figure out a way to run this only once
+            if pipe_x < -self.pipe_width: 
+                pipe_x = 720 # Change
+                pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
+                passed_pipe = False
 
-        # Upper pipe
-        # pipe_x = screen.get_width()
-        self.upper_pipe_y = self.pipe_gap_y - self.pipe_height
+            # Upper pipe
+            # pipe_x = screen.get_width()
+            upper_pipe_y = pipe_gap_y - self.pipe_height
 
-        pygame.draw.rect(screen, self.color, (self.pipe_x, self.upper_pipe_y, self.pipe_width, self.pipe_height))
+            pygame.draw.rect(screen, self.color, (pipe_x, upper_pipe_y, self.pipe_width, self.pipe_height))
 
-        # Lower pipe
-        self.lower_pipe_y = self.pipe_gap_y + self.pipe_gap
+            # Lower pipe
+            lower_pipe_y = pipe_gap_y + self.pipe_gap
 
-        pygame.draw.rect(screen, self.color, (self.pipe_x, self.lower_pipe_y, self.pipe_width, self.pipe_height))
+            pygame.draw.rect(screen, self.color, (pipe_x, lower_pipe_y, self.pipe_width, self.pipe_height))
 
-        self.pipe_x -= self.speed
+            self.collision()
+            pipe_x -= self.speed
 
 
-    def collision_x(self):
-        return self.pipe_x <= self.bird_x - 15 <= self.pipe_x + self.pipe_width or self.pipe_x <= self.bird_x + 15 <= self.pipe_x + self.pipe_width
+    def collision_x(self, pipe_x, bird_x, pipe_width):
+        return pipe_x <= bird_x - 15 <= pipe_x + pipe_width or pipe_x <= bird_x + 15 <= pipe_x + pipe_width
     
-    def collision_y(self):
-        return not (self.pipe_gap_y <= self.bird_y - 15 <= self.lower_pipe_y) or not (self.pipe_gap_y <= self.bird_y + 15 <= self.lower_pipe_y)
+    def collision_y(self, pipe_gap_y, bird_y, lower_pipe_y):
+        return not (pipe_gap_y <= bird_y - 15 <= lower_pipe_y) or not (pipe_gap_y <= bird_y + 15 <= lower_pipe_y)
 
 
-    def collision(self):
-        return self.collision_x() and self.collision_y()
+    def collision(self, pipe_x, bird_x, pipe_width, pipe_gap_y, bird_y, lower_pipe_y):
+        return self.collision_x(pipe_x, bird_x, pipe_width) and self.collision_y(pipe_gap_y, bird_y, lower_pipe_y)
     
 
     def track_score(self):
