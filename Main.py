@@ -108,7 +108,7 @@ if __name__ == "__main__":
                     if app.on_confirm_button() and selected_difficulty_index > -1:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play()
+                        game = Hitboxes.Game_play(3)
                     else:
                         selected_difficulty_index = app.on_difficulty()
 
@@ -131,7 +131,7 @@ if __name__ == "__main__":
             app.start_game(camera_obj,frame_rate_index, game)
 
             # Collision
-            if game.collision():
+            if not game.check_if_alive():
                 current_state = GAME_OVER
 
             for event in pygame.event.get():
@@ -165,7 +165,7 @@ if __name__ == "__main__":
                     if event.key == pygame.K_SPACE:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play()
+                        game = Hitboxes.Game_play(3)
 
         if current_state == PAUSE_MENU:
             app.display_pause_menu()
@@ -187,7 +187,7 @@ if __name__ == "__main__":
                         counted_down = False
 
         if current_state == SETTINGS:
-            app.display_settings(selected_settings_option_index)
+            app.display_settings_menu(selected_settings_option_index)
             # print(selected_settings_option_index)
 
             for event in pygame.event.get():
