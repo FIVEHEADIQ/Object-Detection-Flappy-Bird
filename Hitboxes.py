@@ -48,7 +48,7 @@ class Game_play:
             pipe_x -= self.speed
 
     def check_if_alive(self):
-        return is_alive
+        return self.is_alive
 
 
     def collision_x(self, pipe_x, bird_x, pipe_width):
