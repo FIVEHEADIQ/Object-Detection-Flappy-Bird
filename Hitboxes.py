@@ -10,7 +10,7 @@ class Game_play:
         self.pipe_gap = 100
         self.pipe_nums = pipe_nums
         self.bird_x = 200
-        self.game_resetted = False
+        self.num_resetted = 0
         self.is_alive = True
 
         self.score = 0
@@ -23,10 +23,10 @@ class Game_play:
 
     def pipe_hitboxes(self, screen):
         for i in range(0, self.pipe_nums):
-            if not self.game_resetted:
+            if self.num_resetted <= self.pipe_nums:
                 pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
                 pipe_x = 720 + 180 * self.pipe_nums #figure out a way to run this only once
-                self.game_resetted = True
+                self.num_resetted += 1
             if pipe_x < -self.pipe_width: 
                 pipe_x = 720 # Change
                 pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
