@@ -1,6 +1,6 @@
 """
 Pushup Flappy Bird
-By: Jirehl Ngo
+By: Patrick Liu
 https://www.programiz.com/python-programming/docstrings
 """
 
@@ -48,34 +48,74 @@ class Camera(): # Make all the methods static, remove need for camera object?
         """
         self.cameras = pygame.camera.list_cameras()
 
-def detect_up_down_movement(self, frame):
-        # Convert the frame to grayscale
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+class Music: 
+    """Class for playing arcade style music while the user is in thee game
+    """
+    
+    def __init__(self):
+        """
+        Constructor which initalizes the class with a given file
 
-        # Apply frame differencing if there is a previous frame
-        if self.previous_frame is not None:
-            diff_frame = cv2.absdiff(self.previous_frame, gray_frame)
-            _, thresholded = cv2.threshold(diff_frame, 30, 255, cv2.THRESH_BINARY)
+        Parameters:
+        music_file (str): Path in files to the music file
+        """
+        pygame.mixer.init()
+        self.playlist = []
+        self.current_song_index = 0
 
-            # Find contours in the thresholded image
-            contours, _ = cv2.findContours(thresholded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    def add_song(self, music_file):
+        """
+        Add a song to the playlist.
 
-            for contour in contours:
-                # Calculate centroid of the contour
-                M = cv2.moments(contour)
-                if M["m00"] != 0:
-                    cx = int(M["m10"] / M["m00"])
-                    cy = int(M["m01"] / M["m00"])
+        Parameters:
+        - music_file (str): The path to the music file.
+        """
+        self.playlist.append(pygame.mixer.Sound(music_file))
 
-                    # Determine direction based on the change in centroid position
-                    if cy < self.previous_cy:
-                        print("Moving Up")
-                    elif cy > self.previous_cy:
-                        print("Moving Down")
+    def play(self, loop=-1):
+        """
+        Start playing the music.
 
-                    # Update previous centroid position
-                    self.previous_cx, self.previous_cy = cx, cy
+        Parameters:
+        loop (int): Number of times to loop the music. Set to -1 for infinite loop.
+        """
+        pygame.mixer.music.play(loop)
+        
+    def next_song(self):
+        """Switch to the next song in the playlist."""
+        self.stop()
+        self.current_song_index = (self.current_song_index + 1) % len(self.playlist)
+        self.play()
+        
+    def pause(self):
+        """Pause the currently playing music."""
+        pygame.mixer.music.pause()
 
-            # Display the frames
-            cv2.imshow('Motion Detection', frame)
-            cv2.imshow('Thresholded', thresholded)
+    def unpause(self):
+        """Unpause the currently paused music."""
+        pygame.mixer.music.unpause()
+
+    def stop(self):
+        """Stop playing the music."""
+        pygame.mixer.music.stop()
+
+    def set_volume(self, volume):
+        """
+        Set the volume level of the music.
+
+        Parameters:
+        volume (float): Volume level (0.0 to 1.0).
+        """
+        pygame.mixer.music.set_volume(volume)
+
+    def get_volume(self):
+        """
+        Get the current volume level of the music.
+
+        Returns:
+        float: The current volume level (0.0 to 1.0).
+        """
+        return pygame.mixer.music.get_volume()
+    
+music_player = Music()
+music_player.play()
