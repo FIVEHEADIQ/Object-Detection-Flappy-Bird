@@ -3,8 +3,7 @@ import cv2
 import pygame
 import numpy as np
 from ultralytics import YOLO
-import tensorflow as tf
-from tensorflow.python.compiler.tensorrt import trt_convert as trt
+
 
 class Model:
     def __init__(self, camera_index):
@@ -21,21 +20,7 @@ class Model:
 
         # Load a pretrained YOLOv8n model
         self.model = YOLO("weights/yolov8n.pt", "v8")
-        saved_model = tf.saved_model.load(self.model)
 
-        # Convert to a frozen graph
-        frozen_func = saved_model.signatures["serving_default"]
-        frozen_graph = tf.function(lambda x: frozen_func(x)["output_0"])
-        concrete_func = frozen_graph.get_concrete_function(tf.TensorSpec(shape=[None, None, None, 3], dtype=tf.float32))
-        frozen_graph_def = tf.graph_util.convert_variables_to_constants_v2(concrete_func.graph.as_graph_def(), ["output_0"])
-
-        # Convert the frozen graph to a TensorRT graph
-        converter = trt.TrtGraphConverterV2(input_saved_model_dir="weights/yolov8n_saved_model")
-        trt_graph = converter.convert()
-
-        # Save the TensorRT optimized graph
-        with tf.io.gfile.GFile("weights/yolov8n_trt_optimized_graph.pb", 'wb') as f:
-            f.write(trt_graph.SerializeToString())
         # Vals to resize video frames | small frame optimize the run
         frame_wid = 180 # 640 or 540
         frame_hyt = 120 # 480 or 360
