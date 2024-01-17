@@ -69,44 +69,50 @@ import random
 
 class Game_play:
     def __init__(self, pipe_nums):
-        self.speed = 20
         self.pipe_width = 45
         self.pipe_height = 720
         self.pipe_gap = 100
         self.pipe_nums = pipe_nums
+        self.speed = 20 - self.pipe_nums
         self.bird_x = 200
         self.num_resetted = 0
         self.pipe_x_list = []
         self.pipe_gap_y_list = []
+        self.passed_pipe_list = []
         self.is_alive = True
 
         self.score = 0
 
         self.color = (0, 255, 6)
+
+        self.passed_pipes = 0
     
     def bird_hitbox(self, screen, model: Model_Pygame.Model):
         self.bird_y = model.get_y_pos() + 120
         pygame.draw.circle(screen, self.color, (self.bird_x, self.bird_y), 15) # Color OG: 0, 0, 6
 
     def pipe_hitboxes(self, screen):
-        for i in range(0, self.pipe_nums + 1):
+        for i in range(0, self.pipe_nums + 1): # For every pipe
+            # Initialize pipe coordinates on startup
             if self.num_resetted <= self.pipe_nums:
                 pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
                 pipe_x = 720 + self.pipe_width * i + 720/(self.pipe_nums + 1) * i #figure out a way to run this only once
                 self.num_resetted += 1
+                passed_pipe = False
                 self.pipe_x_list.append(pipe_x)
                 self.pipe_gap_y_list.append(pipe_gap_y)
+                self.passed_pipe_list.append(passed_pipe)
 
             pipe_x = self.pipe_x_list[i]
-            # pipe_gap_y = self.pipe_gap_y_list[i]
 
+            # If pipe goes offscreen
             if pipe_x < -self.pipe_width: 
                 pipe_x += 720 + (self.pipe_width + 1) * (self.pipe_nums + 1)
                 pipe_gap_y = random.randint(140, 480 - self.pipe_gap - 20)
                 self.pipe_gap_y_list[i] = pipe_gap_y
-                passed_pipe = False
 
             pipe_gap_y = self.pipe_gap_y_list[i]
+            passed_pipe = self.passed_pipe_list[i]
 
             # Upper pipe
             # pipe_x = screen.get_width()
@@ -125,6 +131,8 @@ class Game_play:
             pipe_x -= self.speed
             self.pipe_x_list[i] = pipe_x
 
+            self.track_score(pipe_x, self.bird_x, self.pipe_width, passed_pipe, i)
+
     def check_if_alive(self):
         return self.is_alive
 
@@ -138,6 +146,11 @@ class Game_play:
 
     def collision(self, pipe_x, bird_x, pipe_width, pipe_gap_y, bird_y, lower_pipe_y):
         return self.collision_x(pipe_x, bird_x, pipe_width) and self.collision_y(pipe_gap_y, bird_y, lower_pipe_y)
+    
+    def track_score(self, pipe_x, bird_x, pipe_width, passed_pipe, i):
+        if not passed_pipe and pipe_x + pipe_width < bird_x:
+            self.score += 1
+            self.passed_pipe_list[i] = True
     
 
     # def track_score(self):
