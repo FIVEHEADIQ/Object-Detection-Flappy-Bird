@@ -81,7 +81,17 @@ class Application():
         self.screen.fill(self.color)
         self.display_selected_camera(camera, selected_camera_index)
 
-        # Title
+        self.display_title()
+        self.display_play_button()
+        self.display_skins_button()
+        self.display_settings_button()
+
+        pygame.display.update()
+
+      # destination_surface.blit(source_surface, dest_position, area=None, special_flags=0)
+
+
+    def display_title(self):
         title_text = self.bigfont.render("Pushup Flappy Bird", True, self.color)
 
         title_width = 400
@@ -95,7 +105,7 @@ class Application():
         self.screen.blit(title_text, (title_x, title_y))
 
 
-        # Play button
+    def display_play_button(self):
         play_button_text = self.bigfont.render('Play' , True , self.color)
 
         self.play_button_width = 155
@@ -111,9 +121,21 @@ class Application():
             pygame.draw.rect(self.screen, self.color_dark, play_button_rect)
         
         self.screen.blit(play_button_text, (self.play_button_x + self.play_button_width/4, self.play_button_y))
-        
 
-        # Skins button
+
+    def on_play_button(self) -> bool:
+        """Returns a boolean value if the cursor is on the 'play' button or not
+
+        Args:
+            None
+
+        Returns:
+            bool: If mouse coordinates are within the 'play' button coordinates and dimensions
+        """
+        return self.play_button_x <= self.mouse[0] <= self.play_button_x + self.play_button_width and self.play_button_y <= self.mouse[1] <= self.play_button_y + self.play_button_height
+    
+
+    def display_skins_button(self):
         self.skins_button_width = 155
         self.skins_button_height = 45
         self.skins_button_x = self.width/2 - self.skins_button_width/2
@@ -130,7 +152,19 @@ class Application():
         self.screen.blit(skins_button_text, (self.skins_button_x + self.skins_button_width/6, self.skins_button_y))
 
 
-        # Settings button
+    def on_skins_button(self) -> bool:
+        """Returns a boolean value if the cursor is on the 'skins' button or not
+
+        Args:
+            None
+
+        Returns:
+            bool: If mouse coordinates are within the 'skins' button coordinates and dimensions
+        """
+        return self.skins_button_x <= self.mouse[0] <= self.skins_button_x + self.skins_button_width and self.skins_button_y <= self.mouse[1] <= self.skins_button_y + self.skins_button_height
+
+
+    def display_settings_button(self):
         settings_button_text = self.bigfont.render("Settings", True, self.color)
 
         self.settings_button_width = 155
@@ -147,33 +181,6 @@ class Application():
 
         self.screen.blit(settings_button_text, (self.settings_button_x, self.settings_button_y))
 
-        pygame.display.update()
-
-      # destination_surface.blit(source_surface, dest_position, area=None, special_flags=0)
-
-
-    def on_play_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'play' button or not
-
-        Args:
-            None
-
-        Returns:
-            bool: If mouse coordinates are within the 'play' button coordinates and dimensions
-        """
-        return self.play_button_x <= self.mouse[0] <= self.play_button_x + self.play_button_width and self.play_button_y <= self.mouse[1] <= self.play_button_y + self.play_button_height
-    
-
-    def on_skins_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'skins' button or not
-
-        Args:
-            None
-
-        Returns:
-            bool: If mouse coordinates are within the 'skins' button coordinates and dimensions
-        """
-        return self.skins_button_x <= self.mouse[0] <= self.skins_button_x + self.skins_button_width and self.skins_button_y <= self.mouse[1] <= self.skins_button_y + self.skins_button_height
 
     def on_settings_button(self) -> bool:
         """Returns a boolean value if the cursor is on the 'settings' button or not
@@ -473,7 +480,7 @@ class Application():
         pygame.display.update()
     
 
-    def display_settings(self, highlighted_settings_option):
+    def display_settings_menu(self, highlighted_settings_option):
         """Displays a menu to change settings
 
         Args:
@@ -588,16 +595,7 @@ class Application():
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
         model = camera.get_model()
-        # self.image = camera.get_image()
-
-        # Resize the captured frame to fit the screen
-        # self.image = pygame.transform.scale(self.image, (self.width, self.height))
-
-        # Fill the entire window with the background color
-        # self.screen.fill(self.color)
-
-        # Draw the captured frame onto the screen
-        # self.screen.blit(self.image, (0, 0))
+ 
         model.recognize(self.screen, self.width, self.height)
         game.bird_hitbox(self.screen, model)
 
@@ -760,24 +758,24 @@ class Application():
             pygame.display.update()
 
 
-    def blur_surface(self, surface: pygame.surface.Surface, amt: int): # Copy pasted from the internet
+    def blur_surface(self, surface: pygame.surface.Surface, amount: int): # Copy pasted from the internet
         """Blur the given surface by the given 'amount'.  Only values 1 and greater are valid.  Value 1 = no blur.
 
         Args:
             pygame.surface.Surface (surface): Surface to blur
-            int (amt): Blur value
+            int (amount): Blur value
 
         Returns:
             pygame.surface.Surface: Blurred surface
         """
-        if amt < 1.0:
-            raise ValueError("Arg 'amt' must be greater than 1.0, passed in value is %s"%amt)
-        scale = 1.0/float(amt)
-        surf_size = surface.get_size()
-        scale_size = (int(surf_size[0]*scale), int(surf_size[1]*scale))
-        surf = pygame.transform.smoothscale(surface, scale_size)
-        surf = pygame.transform.smoothscale(surf, surf_size)
-        return surf
+        if amount < 1.0:
+            raise ValueError("Arg 'amount' must be greater than 1.0, passed in value is %s"%amount)
+        scale = 1.0/float(amount)
+        surface_size = surface.get_size()
+        scale_size = (int(surface_size[0]*scale), int(surface_size[1]*scale))
+        surface = pygame.transform.smoothscale(surface, scale_size)
+        surface = pygame.transform.smoothscale(surface, surface_size)
+        return surface
 
 
     def display_game_over_menu(self):
@@ -792,18 +790,8 @@ class Application():
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
         self.screen.fill(self.color)
 
-        # Title
-        game_over_text = self.bigfont.render("Game over", True, self.color)
-
-        game_over_width = 400
-        game_over_height = 45
-        game_over_x = self.width/2 - game_over_width/2
-        game_over_y = self.height/14 + game_over_height/2
-
-        game_over_rect = [game_over_x, game_over_y, game_over_width, game_over_height]
-
-        pygame.draw.rect(self.screen, self.color_light, game_over_rect)
-        self.screen.blit(game_over_text, (game_over_x, game_over_y))
+        
+        self.display_game_over_text()
 
 
         # retry button
@@ -827,8 +815,24 @@ class Application():
 
         pygame.display.update()
 
+
+    def display_game_over_text(self):
+        game_over_text = self.bigfont.render("Game over", True, self.color)
+
+        game_over_width = 400
+        game_over_height = 45
+        game_over_x = self.width/2 - game_over_width/2
+        game_over_y = self.height/14 + game_over_height/2
+
+        game_over_rect = [game_over_x, game_over_y, game_over_width, game_over_height]
+
+        pygame.draw.rect(self.screen, self.color_light, game_over_rect)
+        self.screen.blit(game_over_text, (game_over_x, game_over_y))
+
     
     def on_retry_button(self) -> bool:
+        """Returns a boolean value of the mouse is on the 'retry' button or not
+        """
         return self.retry_x <= self.mouse[0] <= self.retry_x + self.retry_width and self.retry_y <= self.mouse[1] <= self.retry_y + self.retry_height
 
       # destination_surface.blit(source_surface, dest_position, area=None, special_flags=0)
