@@ -38,11 +38,6 @@ class Camera(): # Make all the methods static, remove need for camera object?
         if cam_started:
             cam_started = False
             self.model.stop()
-    def get_image(self):
-        """Returns a frame from the video feed
-        """
-        image = self.cam.get_image()
-        return pygame.transform.flip(image, True, False)
     def refresh_camera_list(self):
         """Loads a list of all available cameras
         """
@@ -62,6 +57,7 @@ class Music:
         pygame.mixer.init()
         self.playlist = []
         self.current_song_index = 0
+        self.started_music = False
 
     def add_song(self, music_file):
         """
@@ -70,7 +66,7 @@ class Music:
         Parameters:
         - music_file (str): The path to the music file.
         """
-        self.playlist.append(pygame.mixer.Sound(music_file))
+        self.playlist.append(music_file)
 
     def play(self, loop=-1):
         """
@@ -79,7 +75,10 @@ class Music:
         Parameters:
         loop (int): Number of times to loop the music. Set to -1 for infinite loop.
         """
-        pygame.mixer.music.play(loop)
+        if not self.started_music:
+            pygame.mixer.music.load(self.playlist[self.current_song_index])
+            pygame.mixer.music.play(loop)
+            self.started_music = True
         
     def next_song(self):
         """Switch to the next song in the playlist."""
@@ -116,3 +115,15 @@ class Music:
         float: The current volume level (0.0 to 1.0).
         """
         return pygame.mixer.music.get_volume()
+    
+    # def load_playlist(self, playlist):
+    #     """
+    #     Load a playlist of music tracks.
+
+    #     Args:
+    #         playlist (list): List of paths to music files."""
+    #     self.playlist = playlist
+    #     pygame.mixer.music.load(self.playlist)
+
+    # def get_playlist(self):
+    #     return self.playlist
