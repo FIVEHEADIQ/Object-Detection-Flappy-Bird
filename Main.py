@@ -4,7 +4,7 @@ import Jack
 import Yazen
 import pygame
 import Model_Pygame
-import Hitboxes
+import Jack
 
 # States
 MAIN_MENU = "main_menu"
@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
 
         if current_state == MAIN_MENU:
-            app.display_main_menu(camera_obj, selected_camera_index)
+            app.display_main_menu(camera_obj, selected_camera_index, skins)
             music_player.play(0)
 
             for event in pygame.event.get():  
@@ -116,7 +116,7 @@ if __name__ == "__main__":
                     if app.on_confirm_button() and selected_difficulty_index > -1:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(selected_difficulty_index, screen)
+                        game = Jack.Game_play(selected_difficulty_index, screen)
                         music_player.stop()
                     else:
                         selected_difficulty_index = app.on_difficulty()
@@ -137,11 +137,12 @@ if __name__ == "__main__":
                 app.countdown()
                 counted_down = True
 
-            app.start_game(camera_obj,frame_rate_index, game, skins)
+            app.start_game(camera_obj, frame_rate_index, game, skins)
             if selected_difficulty_index == 0:
                 # music_player.add_song("01 Title Theme.mp3")
                 # music_player.next_song()
-                music_player.play(1)
+                # music_player.play(1)
+                pass
             if selected_difficulty_index == 1:
                 # music_player.add_song("1-17. Accumula Town.mp3")
                 # music_player.next_song()
@@ -182,7 +183,7 @@ if __name__ == "__main__":
                     if app.on_retry_button():
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(selected_difficulty_index, screen)
+                        game = Jack.Game_play(selected_difficulty_index, screen)
                     if app.on_quit_button():
                         current_state = MAIN_MENU
                         music_player.stop()
@@ -191,10 +192,11 @@ if __name__ == "__main__":
                     if event.key == pygame.K_SPACE:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(selected_difficulty_index, screen)
+                        game = Jack.Game_play(selected_difficulty_index, screen)
 
         if current_state == PAUSE_MENU:
             app.display_pause_menu()
+            # music_player.set_volume(music_player.get_volume()/5)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
