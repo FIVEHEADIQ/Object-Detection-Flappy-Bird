@@ -10,28 +10,28 @@ import pygame.camera
 
 class Camera():
     """Class which initializes camera in Pygame GUI
-    
+
     Attributes
     ----------
     None
-    
+
     Methods
     -------
     __init__():
         Constructor for Camera Object
-    
+
     get_cameras():
         Gettor method users Cameras
-        
+
     start_camera(selected_camera_index):
         Starts camera using user selected Camera
-        
+
     get_model():
         Getter method for yolov8 model from Model_pygame.py
-        
+ 
     stop_camera():
         Stops Camera
-        
+
     refresh_camera_list():
         Loads list of available cameras user has
     """
@@ -41,7 +41,7 @@ class Camera():
         pygame.camera.init()
         self.refresh_camera_list()
         self.cam_started = False
-        
+
     def get_cameras(self):
         """Gettor method for all cameras user has
 
@@ -49,28 +49,28 @@ class Camera():
             List[str]: Cameras user has
         """
         return self.cameras
-    
+
     def start_camera(self, selected_camera_index):
         """Starts camera based on selected camera from user
 
         Parameters:
                 selected_camera_index (int): Selected camera of user
-            
+
         """
         if not self.cam_started:
             self.model = Model_Pygame.Model(selected_camera_index)
             self.cam_started = True
-            
+
     def get_model(self):
         return self.model
-    
+
     def stop_camera(self):
         """
         """
         if self.cam_started:
             self.cam_started = False
             self.model.stop()
-            
+
     def refresh_camera_list(self):
         """Loads a list of all available cameras
         """
@@ -92,20 +92,20 @@ class Music:
     -------
     __init__():
         Constructor which initializes the music object
-    
+
     play(index, loop=-1):
         Start playing music, repeats if music is ended
-        
+
     stop():
         Stops music
-        
+
     set_volume(volume):
         Change volume of music, 0.0 for minimum, 1.0 for maximum
-        
+
     get_volume():
         Getter method for current volume
     """
-    
+
     def __init__(self):
         """Constructor for Music Object
         """
@@ -126,7 +126,7 @@ class Music:
             pygame.mixer.music.load(self.playlist[index])
             pygame.mixer.music.play(loop)
             self.music_played = True
-        
+
     def stop(self):
         """Stops music
         """
