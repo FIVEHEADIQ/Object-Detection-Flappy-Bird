@@ -1,7 +1,7 @@
 """
-Flappy Bird Fit
+Flappy Bird Fit Application Class
 By: Jirehl Ngo
-
+2024/01/18
 """
 
 import pygame
