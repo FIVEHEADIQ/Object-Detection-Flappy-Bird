@@ -116,6 +116,3 @@ class Music:
         float: The current volume level (0.0 to 1.0).
         """
         return pygame.mixer.music.get_volume()
-    
-music_player = Music()
-music_player.play()
