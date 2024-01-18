@@ -1,27 +1,20 @@
 """
-Pushup Flappy Bird
+Flappy Bird Fit
 By: Jirehl Ngo
-https://www.programiz.com/python-programming/docstrings
+
 """
 
 import pygame
-import sys
 import pygame.camera
-from pygame.constants import MOUSEBUTTONDOWN
-from pygame.display import set_allow_screensaver
-# import pygame.locals
-import os
-import Main
 import Patrick
 import Yazen
 import Jack
-import Model_Pygame
-import Hitboxes
 
 clock = pygame.time.Clock()
 
+
 class Application():
-    """A class to create the application interface
+    """A class to create the graphical user interface
     """
     def __init__(self):
         """Constructor for Application Class, sets up the Pygame screen/surface
@@ -35,17 +28,18 @@ class Application():
         pygame.init()
         resolution = (720,480)
         self.screen = pygame.display.set_mode(resolution)
-        # print(type(self.screen))
-        self.color = (255,255,255)  
-        self.color_light = (170,170,170)  
-        self.color_dark = (100,100,100)  
         self.width = self.screen.get_width()
         self.height = self.screen.get_height()
 
-        # self.bigfont = pygame.font.SysFont('Corbel', 50) # OG corbel, 50
-        # self.smallfont = pygame.font.SysFont('Corbel', 20)  # OG corbel, 20
-        self.bigfont = pygame.font.SysFont('PressStart2P', 20) # OG corbel, 50
-        self.smallfont = pygame.font.SysFont('PressStart2P', 8)  # OG corbel, 20
+        self.color = (255,255,255)
+        self.color_light = (170,170,170)
+        self.color_dark = (100,100,100)
+
+        # Original font
+        # self.bigfont = pygame.font.SysFont('Corbel', 50)
+        # self.smallfont = pygame.font.SysFont('Corbel', 20)
+        self.bigfont = pygame.font.SysFont("PressStart2P", 20)
+        self.smallfont = pygame.font.SysFont("PressStart2P", 8)
 
         self.frame_rates = ["15", "30", "45", "60"]
 
@@ -62,33 +56,36 @@ class Application():
             None
         """
         self.screen.fill(self.color)
+
         loading_text = self.bigfont.render("Loading...", True, self.color_dark)
         self.screen.blit(loading_text, (0, self.height - 60))
+
         pygame.display.update()
 
 
-    def display_main_menu(self, camera: Patrick.Camera, selected_camera_index: int):
+    def display_main_menu(self, camera: Patrick.Camera, selected_camera_index: int, skins: Yazen.Skins):
         """Displays the main menu
 
         Args:
-            Camera (camera): camera object
+            Patrick.camera (camera): Camera object
             int (selected_camera_index): List index of the user selected camera from the pygame list
+            Yazen.Skins (skins): Skins object
 
         Returns:
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
-        self.screen.fill(self.color)
-        self.display_selected_camera_button(camera, selected_camera_index)
 
+        self.screen.fill(self.color)
+        skins.display_background()
+
+        self.display_selected_camera_button(camera, selected_camera_index)
         self.display_title()
         self.display_play_button()
         self.display_skins_button()
         self.display_settings_button()
 
         pygame.display.update()
-
-      # destination_surface.blit(source_surface, dest_position, area=None, special_flags=0)
 
 
     def display_title(self):
@@ -100,21 +97,19 @@ class Application():
         Returns:
             None
         """
-        title_text = self.bigfont.render("Pushup Flappy Bird", True, self.color)
-
         title_width = 400
         title_height = 45
         title_x = self.width/2 - title_width/2
         title_y = self.height/14 + title_height/2
-
         title_rect = [title_x, title_y, title_width, title_height]
-
         pygame.draw.rect(self.screen, self.color_light, title_rect)
+
+        title_text = self.bigfont.render("Flappy Bird Fit", True, self.color)
         self.screen.blit(title_text, (title_x, title_y))
 
 
     def display_play_button(self):
-        """Displays the 'play' button
+        """Displays the 'Play' button
         
         Args:
             None
@@ -122,13 +117,10 @@ class Application():
         Returns:
             None
         """
-        play_button_text = self.bigfont.render('Play' , True , self.color)
-
         self.play_button_width = 155
         self.play_button_height = 45
         self.play_button_x = self.width/2 - self.play_button_width/2
         self.play_button_y = self.height/2
-
         play_button_rect = [self.play_button_x, self.play_button_y, self.play_button_width, self.play_button_height]
 
         if self.on_play_button():
@@ -136,23 +128,24 @@ class Application():
         else:
             pygame.draw.rect(self.screen, self.color_dark, play_button_rect)
         
+        play_button_text = self.bigfont.render('Play' , True , self.color)
         self.screen.blit(play_button_text, (self.play_button_x + self.play_button_width/4, self.play_button_y))
 
 
     def on_play_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'play' button or not
+        """Returns a boolean value if the cursor is on the 'Play' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the 'play' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Play' button coordinates and dimensions
         """
         return self.play_button_x <= self.mouse[0] <= self.play_button_x + self.play_button_width and self.play_button_y <= self.mouse[1] <= self.play_button_y + self.play_button_height
     
 
     def display_skins_button(self):
-        """Displays the 'skins' button
+        """Displays the 'Skins' button
         
         Args:
             None
@@ -164,7 +157,6 @@ class Application():
         self.skins_button_height = 45
         self.skins_button_x = self.width/2 - self.skins_button_width/2
         self.skins_button_y = self.height/2 + 75
-
         self.skins_button_rect = [self.skins_button_x, self.skins_button_y, self.skins_button_width, self.skins_button_height]
 
         if self.on_skins_button():
@@ -177,19 +169,19 @@ class Application():
 
 
     def on_skins_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'skins' button or not
+        """Returns a boolean value if the cursor is on the 'Skins' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the 'skins' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Skins' button coordinates and dimensions or not
         """
         return self.skins_button_x <= self.mouse[0] <= self.skins_button_x + self.skins_button_width and self.skins_button_y <= self.mouse[1] <= self.skins_button_y + self.skins_button_height
 
 
     def display_settings_button(self):
-        """Displays the 'settings' button
+        """Displays the 'Settings' button
         
         Args:
             None
@@ -197,13 +189,10 @@ class Application():
         Returns:
             None
         """
-        settings_button_text = self.bigfont.render("Settings", True, self.color)
-
         self.settings_button_width = 155
         self.settings_button_height = 45
         self.settings_button_x = self.width/2 - self.settings_button_width/2
         self.settings_button_y = self.height/2 + 150
-
         self.settings_button_rect = [self.settings_button_x, self.settings_button_y, self.settings_button_width, self.settings_button_height]
 
         if self.on_settings_button():
@@ -211,56 +200,60 @@ class Application():
         else:
             pygame.draw.rect(self.screen, self.color_dark, self.settings_button_rect)
 
+        settings_button_text = self.bigfont.render("Settings", True, self.color)
         self.screen.blit(settings_button_text, (self.settings_button_x, self.settings_button_y))
 
 
     def on_settings_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'settings' button or not
+        """Returns a boolean value if the cursor is on the 'Settings' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the 'settings' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Settings' button coordinates and dimensions or not
         """
         return self.settings_button_x <= self.mouse[0] <= self.settings_button_x + self.settings_button_width and self.settings_button_y <= self.mouse[1] <= self.settings_button_y + self.settings_button_height
 
 
     def display_selected_camera_button(self, camera: Patrick.Camera, selected_camera_index: int):
-        """Displays the user selected camera
+        """Displays the user selected camera on a button
 
         Args:
-            Camera (camera): Camera object
+            Patrick.Camera (camera): Camera object
             int (selected_camera_index): List index for chosen camera
 
         Returns:
             None
         """
-        selected_camera = None
         if selected_camera_index > -1:
             selected_camera = camera.get_cameras()[selected_camera_index]
+        else:
+            selected_camera = None
+
         self.selected_camera_x = self.width/100
         self.selected_camera_y = self.height/100
         self.selected_camera_width = 300
         self.selected_camera_height = 20
         self.selected_camera_rect = [self.selected_camera_x, self.selected_camera_y, self.selected_camera_width, self.selected_camera_height]
 
-        selected_camera_text = self.smallfont.render(f"Selected Camera: {selected_camera}" , True, self.color)
         if self.on_selected_camera_button():
             pygame.draw.rect(self.screen, self.color_light, self.selected_camera_rect)
         else:
             pygame.draw.rect(self.screen, self.color_dark, self.selected_camera_rect)
+
+        selected_camera_text = self.smallfont.render(f"Selected Camera: {selected_camera}" , True, self.color)
         self.screen.blit(selected_camera_text, (self.selected_camera_x, self.selected_camera_y))
 
 
     def on_selected_camera_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'selected camera' button or not
+        """Returns a boolean value if the cursor is on the 'Selected camera' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the 'selected camera' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Selected camera' button coordinates and dimensions or not
         """
         return self.selected_camera_x <= self.mouse[0] <= self.selected_camera_x + self.selected_camera_width and self.selected_camera_y <= self.mouse[1] <= self.selected_camera_y + self.selected_camera_height
 
@@ -269,36 +262,33 @@ class Application():
         """Displays a menu to select availble cameras
 
         Args:
-            Camera (camera): Camera object
+            Patrick.Camera (camera): Camera object
             int (highlighted_camera): List index of camera currently selected (not confirmed)
         
         Returns:
             None
-            
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
+
         self.screen.fill(self.color)
+
         self.display_back_button()
         self.display_confirm_button()
 
         available = self.bigfont.render("Available Cameras: ", True, self.color_dark)
         self.screen.blit(available, (self.width/2 - self.width/4, self.height/12))
 
-        cameras = camera.get_cameras() # HEREERERERERERERERERERERERERE
-        # cameras.append("Test")
-        # cameras.append("Test2")
-        # cameras.pop(0)
-        increment = 0
-        # cameras can just be cameras as of Jan 9th
+        cameras = camera.get_cameras()
+
         self.option_x = self.width/2 - self.width/4
         self.option_y_list = []
         self.option_width = 360
         self.option_height = 40
+        increment = 0
 
-        # ERROR CATCH: if no cameras (with refresh button)
+        # Display 'n' number of camera options
         if len(cameras) > 0:
-            for camera in cameras:
-                camera = str(camera)
+            for camera in cameras:                
                 self.option_y = self.height/4 + increment
                 increment += 75
 
@@ -310,10 +300,12 @@ class Application():
                 else:
                     pygame.draw.rect(self.screen, self.color_dark, self.option_rect)
                 
-                option = self.bigfont.render(camera, True, self.color) # Change camera to 0?
+                camera = str(camera) # Before using OpenCV this actually gave the camera names instead of numbers
+                option = self.bigfont.render(camera, True, self.color) 
                 self.screen.blit(option, (self.option_x, self.option_y))
         else:
             pygame.draw.rect(self.screen, self.color_dark, [self.option_x, self.height/4, self.option_width, self.option_height])
+
             no_cameras = self.bigfont.render("None found", True, self.color)
             self.screen.blit(no_cameras, (self.option_x, self.height/4))
 
@@ -345,26 +337,29 @@ class Application():
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
+
         self.screen.fill(self.color)
-        difficulties = ["Easy", "Medium", "Hard", "Professional"] # Maybe display high scores
+
         self.display_back_button()
         self.display_confirm_button()
 
         select_difficulty_text = self.bigfont.render("Select a Difficulty: ", True, self.color_dark)
         self.screen.blit(select_difficulty_text, (self.width/2 - self.width/4, self.height/12))
 
-        increment = 0
+        difficulties = ["Easy", "Medium", "Hard", "Professional"] # 'n' = list size
 
         self.difficulty_x = self.width/2 - self.width/4
         self.difficulty_y_list = []
         self.difficulty_width = 360
         self.difficulty_height = 40
+        increment = 0
 
+        # Display 'n' number of difficulties
         for difficulty in difficulties:
             self.difficulty_y = self.height/4 + increment
             increment += 75
-            self.difficulty_rect = [self.difficulty_x, self.difficulty_y, self.difficulty_width, self.difficulty_height]
 
+            self.difficulty_rect = [self.difficulty_x, self.difficulty_y, self.difficulty_width, self.difficulty_height]
             self.difficulty_y_list.append(self.difficulty_y)
 
             if self.on_difficulty() == (increment - 75) / 75 or (increment - 75) / 75 == highlighted_difficulty:
@@ -389,13 +384,12 @@ class Application():
         """
         for i in range(0, len(self.difficulty_y_list)):
             if self.difficulty_x <= self.mouse[0] <= self.difficulty_x + self.difficulty_width and self.difficulty_y_list[i] <= self.mouse[1] <= self.difficulty_y_list[i] + self.difficulty_height:
-                # pass # Return numbers
                 return i
         return -1
 
 
     def display_back_button(self):
-        """Displays the 'back' button
+        """Displays the 'Back' button
 
         Args:
             None
@@ -413,24 +407,25 @@ class Application():
             pygame.draw.rect(self.screen, self.color_light, self.back_rect)
         else:
             pygame.draw.rect(self.screen, self.color_dark, self.back_rect)
+
         back_text = self.bigfont.render("Back", True, self.color)
         self.screen.blit(back_text, (self.back_x, self.back_y))
         
 
     def on_back_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'back' button or not
+        """Returns a boolean value if the cursor is on the 'Back' button or not
 
         Args:
             None
         
         Returns:
-            bool: If mouse coordinates are within the 'back' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Back' button coordinates and dimensions
         """
         return self.back_x <= self.mouse[0] <= self.back_x + self.back_width and self.back_y <= self.mouse[1] <= self.back_y + self.back_height
 
 
     def display_confirm_button(self):
-        """Displays the 'confirm' button
+        """Displays the 'Confirm' button
 
         Args:
             None
@@ -448,47 +443,46 @@ class Application():
             pygame.draw.rect(self.screen, self.color_light, self.confirm_rect)
         else:
             pygame.draw.rect(self.screen, self.color_dark, self.confirm_rect)
+
         confirm_text = self.bigfont.render("Confirm", True, self.color)
         self.screen.blit(confirm_text, (self.confirm_x, self.confirm_y))
 
 
     def on_confirm_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'confirm' button or not
+        """Returns a boolean value if the cursor is on the 'Confirm' button or not
 
         Args:
             None
         
             
         Returns:
-            bool: If mouse coordinates are within the 'confirm' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Confirm' button coordinates and dimensions
         """
         return self.confirm_x <= self.mouse[0] <= self.confirm_x + self.confirm_width and self.confirm_y <= self.mouse[1] <= self.confirm_y + self.confirm_height
 
 
-    def calibrate(self, camera: Patrick.Camera, selected_camera_index: int, frame_rate_index):
+    def calibrate(self, camera: Patrick.Camera, selected_camera_index: int, frame_rate_index: int):
         """Displays the camera video as a test
 
         Args:
-            Camera (camera): Camera object
+            Patrick.Camera (camera): Camera object
             int (selected_camera_index): List index for selected camera
+            int (frame_rate_index): List index of selected frame rate
 
         Returns:
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
-        model = camera.get_model()
 
-        # Fill the entire window with the background color
         self.screen.fill(self.color)
 
-        # Draw the captured frame onto the screen
-        # self.screen.blit(image, (0, 0))
-        model.recognize(self.screen, self.width, self.height)
+        model = camera.get_model()
+        model.recognize(self.screen, self.width, self.height) 
+
         self.display_selected_camera_button(camera, selected_camera_index)
         self.display_back_button()
         self.display_confirm_button()
 
-        # Update the display
         pygame.display.update()
 
         # Cap the frame rate
@@ -496,7 +490,7 @@ class Application():
 
 
     def select_skins(self):
-        """Displays the skins menu
+        """Displays the 'Skins' menu
 
         Args:
             None
@@ -505,6 +499,7 @@ class Application():
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
+
         self.screen.fill(self.color)
         
         self.display_back_button()
@@ -521,30 +516,29 @@ class Application():
         Returns:
             None
         """
-        # Change frame rate, sound, hide background
         self.mouse = pygame.mouse.get_pos()
 
-        # Change frame rate
         self.screen.fill(self.color)
-        settings_options = ["Frame rate", "Background", "Audio"] # Resolution will be a future update
+
         self.display_back_button()
         self.display_confirm_button()
 
         settings_options_text = self.bigfont.render("Settings", True, self.color_dark)
         self.screen.blit(settings_options_text, (self.width/2 - self.width/4, self.height/12))
 
-        increment = 0
+        settings_options = ["Frame rate", "Background", "Audio"] # Resolution will be a future update
 
         self.settings_option_x = self.width/2 - self.width/4
         self.settings_option_y_list = []
         self.settings_option_width = 360
         self.settings_option_height = 40
+        increment = 0
 
         for settings_option in settings_options:
             self.settings_option_y = self.height/4 + increment
             increment += 75
-            self.settings_option_rect = [self.settings_option_x, self.settings_option_y, self.settings_option_width, self.settings_option_height]
 
+            self.settings_option_rect = [self.settings_option_x, self.settings_option_y, self.settings_option_width, self.settings_option_height]
             self.settings_option_y_list.append(self.settings_option_y)
 
             if self.on_settings_option() == (increment - 75) / 75 or (increment - 75) / 75 == highlighted_settings_option:
@@ -558,54 +552,51 @@ class Application():
         pygame.display.update()
 
 
-    def on_settings_option(self):
-        """Returns a list index
+    def on_settings_option(self) -> int:
+        """Returns a list index of the settings option the mouse is on
         
         Args:
             None
 
         Returns:
-            int: list index of settings option the mouse is on
+            int: List index of the settings option the mouse is on
         """
         for i in range(0, len(self.settings_option_y_list)):
             if self.settings_option_x <= self.mouse[0] <= self.settings_option_x + self.settings_option_width and self.settings_option_y_list[i] <= self.mouse[1] <= self.settings_option_y_list[i] + self.settings_option_height:
-                # pass # Return numbers
                 return i
         return -1
 
 
-    def select_frame_rate(self, highlighted_frame_rate_option):
+    def select_frame_rate(self, highlighted_frame_rate_option: int):
         """Displays a screen to select a frame rate
         
         Args:
-            int (highlighted_frame_rate_option): list index of currently selected frame rate option
+            int (highlighted_frame_rate_option): List index of currently selected frame rate option
 
         Returns:
             None
         """
         self.mouse = pygame.mouse.get_pos()
 
-        # Change frame rate
         self.screen.fill(self.color)
-        # self.frame_rates = ["15", "30", "45", "60"] # Moved to constructor
+
         self.display_back_button()
         self.display_confirm_button()
 
         frame_rate_text = self.bigfont.render("Select a Frame Rate: ", True, self.color_dark)
         self.screen.blit(frame_rate_text, (self.width/2 - self.width/4, self.height/12))
 
-        increment = 0
-
         self.frame_rate_option_x = self.width/2 - self.width/4
         self.frame_rate_option_y_list = []
         self.frame_rate_option_width = 360
         self.frame_rate_option_height = 40
+        increment = 0
 
         for frame_rate in self.frame_rates:
             self.frame_rate_option_y = self.height/4 + increment
             increment += 75
-            self.frame_rate_option_rect = [self.frame_rate_option_x, self.frame_rate_option_y, self.frame_rate_option_width, self.frame_rate_option_height]
 
+            self.frame_rate_option_rect = [self.frame_rate_option_x, self.frame_rate_option_y, self.frame_rate_option_width, self.frame_rate_option_height]
             self.frame_rate_option_y_list.append(self.frame_rate_option_y)
 
             if self.on_frame_rate_option() == (increment - 75) / 75 or (increment - 75) / 75 == highlighted_frame_rate_option:
@@ -621,17 +612,16 @@ class Application():
 
 
     def on_frame_rate_option(self) -> int:
-        """Returns a list index
+        """Returns a list index of the frame rate option the mouse is on
         
         Args:
             None
 
         Returns:
-            int: list index
+            int: List index of the frame rate option the mouse is on
         """
         for i in range(0, len(self.frame_rate_option_y_list)):
             if self.frame_rate_option_x <= self.mouse[0] <= self.frame_rate_option_x + self.frame_rate_option_width and self.frame_rate_option_y_list[i] <= self.mouse[1] <= self.frame_rate_option_y_list[i] + self.frame_rate_option_height:
-                # pass # Return numbers
                 return i
         return -1
     
@@ -643,41 +633,46 @@ class Application():
             None
 
         Returns:
-            int: selected frame rate
+            int: Selected frame rate
         """
         return int(self.frame_rates[index])
     
 
-    def start_game(self, camera: Patrick.Camera, frame_rate_index, game: Hitboxes.Game_play, skins: Yazen.Skins):
+    def start_game(self, camera: Patrick.Camera, frame_rate_index: int, game: Jack.Game_play, skins: Yazen.Skins):
         """Start the game
 
         Args:
-            Camera (camera): Camera object
+            Patrick.Camera (camera): Camera object
+            int (frame_rate_index): List index of selected frame rate
+            Jack.Game_play (game): Game object
+            Yazen.Skins (skins): Skins object
 
         Returns:
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
+
         model = camera.get_model()
         model.recognize(self.screen, self.width, self.height)
+
+        skins.display_background()
 
         game.bird_hitbox(model)
         game.bird_skin(skins.get_bird_list()[4])
         game.pipe_hitboxes()
+
         score = self.bigfont.render(str(game.get_score()), True, self.color)
         self.screen.blit(score, (self.width/2, self.height/20))
 
         self.display_pause_button()
 
-        # Update the display
         pygame.display.update()
 
-        # Cap the frame rate
         clock.tick(self.get_frame_rate(frame_rate_index))
 
 
     def display_pause_button(self):
-        """Displays the 'pause' button
+        """Displays the 'Pause' button
 
         Args:
             None
@@ -693,18 +688,18 @@ class Application():
         else:
             pygame.draw.circle(self.screen, self.color_dark, self.pause_center, self.pause_radius)
         
-        self.pause_icon = self.bigfont.render("| |", True, self.color)
-        self.screen.blit(self.pause_icon, (self.pause_center[0] - 16, self.pause_center[1] - 25))
+        self.pause_icon = self.bigfont.render("||", True, self.color)
+        self.screen.blit(self.pause_icon, (self.pause_center[0] - 20, self.pause_center[1] - 20))
     
 
     def on_pause_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'pause' button or not
+        """Returns a boolean value if the cursor is on the 'Pause' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the 'pause' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Pause' button coordinates and dimensions
         """
         return self.pause_center[0] - self.pause_radius <= self.mouse[0] <= self.pause_center[0] + self.pause_radius and self.pause_center[1] - self.pause_radius <= self.mouse[1] <= self.pause_center[1] + self.pause_radius
 
@@ -719,12 +714,27 @@ class Application():
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
-        # self.image = camera.get_image()
+
         self.image = self.blur_surface(self.screen, 25)
         self.screen.blit(self.image, (0, 0))
 
+        self.display_resume_button()
+        self.display_quit_button()
 
-        # Resume button
+        pygame.display.update()
+
+        clock.tick(60)
+
+
+    def display_resume_button(self):
+        """Displays the 'Resume' button
+
+        Args:  
+            None
+
+        Returns:
+            None
+        """
         self.resume_width = 160
         self.resume_height = 45
         self.resume_x = self.width/2 - self.resume_width/2
@@ -740,28 +750,27 @@ class Application():
         self.screen.blit(resume_text, (self.resume_x, self.resume_y))
 
 
-        self.display_quit_button()
-
-        # Update the display
-        pygame.display.update()
-
-        # Cap the frame rate
-        clock.tick(60)
-
-
     def on_resume_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'resume' button or not
+        """Returns a boolean value if the cursor is on the 'Resume' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the 'resume' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Resume' button coordinates and dimensions or not
         """
         return self.resume_x <= self.mouse[0] <= self.resume_x + self.resume_width and self.resume_y <= self.mouse[1] <= self.resume_y + self.resume_height
 
 
     def display_quit_button(self):
+        """Displays the 'Quit' button
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.quit_width = 160
         self.quit_height = 45
         self.quit_x = self.width/2 - self.quit_width/2
@@ -778,13 +787,13 @@ class Application():
 
 
     def on_quit_button(self) -> bool:
-        """Returns a boolean value if the cursor is on the 'quit' button or not
+        """Returns a boolean value if the cursor is on the 'Quit' button or not
 
         Args:
             None
 
         Returns:
-            bool: If mouse coordinates are within the 'quit' button coordinates and dimensions
+            bool: If mouse coordinates are within the 'Quit' button coordinates and dimensions or not
         """
         return self.quit_x <= self.mouse[0] <= self.quit_x + self.quit_width and self.quit_y <= self.mouse[1] <= self.quit_y + self.quit_height
 
@@ -804,8 +813,6 @@ class Application():
         while i >= 0:
             self.image = self.blur_surface(self.screen, 25)
             self.screen.blit(self.image, (0, 0))
-            # number = self.bigfont.render(str(i), True, self.color)
-            start = self.bigfont.render("Go!", True, self.color)
 
             # Calculate elapsed time
             current_time = pygame.time.get_ticks()
@@ -816,11 +823,15 @@ class Application():
                 i -= 1
                 # Reset start time for the next delay
                 start_time = pygame.time.get_ticks()
+
             number = self.bigfont.render(str(i), True, self.color)
+            start = self.bigfont.render("Go!", True, self.color)
+
             if i == 0:
                 self.screen.blit(start, (self.width/2, self.height/2))
             elif i > 0:
                 self.screen.blit(number, (self.width/2, self.height/2))
+
             pygame.display.update()
 
 
@@ -829,7 +840,7 @@ class Application():
 
         Args:
             pygame.surface.Surface (surface): Surface to blur
-            int (amount): Blur value
+            int (amount): Blur amount
 
         Returns:
             pygame.surface.Surface: Blurred surface
@@ -854,13 +865,46 @@ class Application():
             None
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
+
         self.screen.fill(self.color)
 
-        
         self.display_game_over_text()
+        self.display_retry_button()
+        self.display_quit_button()
+
+        pygame.display.update()
 
 
-        # retry button
+    def display_game_over_text(self):
+        """Displays 'Game Over' text
+        
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        game_over_width = 400
+        game_over_height = 45
+        game_over_x = self.width/2 - game_over_width/2
+        game_over_y = self.height/14 + game_over_height/2
+        game_over_rect = [game_over_x, game_over_y, game_over_width, game_over_height]
+
+        pygame.draw.rect(self.screen, self.color_light, game_over_rect)
+
+        game_over_text = self.bigfont.render("Game over", True, self.color)
+        self.screen.blit(game_over_text, (game_over_x, game_over_y))
+
+    
+    def display_retry_button(self):
+        """Displays the 'Retry' button
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.retry_width = 160
         self.retry_height = 45
         self.retry_x = self.width/2 - self.retry_width/2
@@ -875,39 +919,26 @@ class Application():
         retry_text = self.bigfont.render("Retry", True, self.color)
         self.screen.blit(retry_text, (self.retry_x, self.retry_y))
 
+    
+    def on_retry_button(self) -> bool:
+        """Returns a boolean value of the mouse is on the 'Retry' button or not
 
-        self.display_quit_button()
-
-
-        pygame.display.update()
-
-
-    def display_game_over_text(self):
-        """Displays 'Game Over' text
-        
         Args:
             None
 
         Returns:
-            None
-        """
-        game_over_text = self.bigfont.render("Game over", True, self.color)
-
-        game_over_width = 400
-        game_over_height = 45
-        game_over_x = self.width/2 - game_over_width/2
-        game_over_y = self.height/14 + game_over_height/2
-
-        game_over_rect = [game_over_x, game_over_y, game_over_width, game_over_height]
-
-        pygame.draw.rect(self.screen, self.color_light, game_over_rect)
-        self.screen.blit(game_over_text, (game_over_x, game_over_y))
-
-    
-    def on_retry_button(self) -> bool:
-        """Returns a boolean value of the mouse is on the 'retry' button or not
+            bool: If the mouse is on the 'Retry' button or not
         """
         return self.retry_x <= self.mouse[0] <= self.retry_x + self.retry_width and self.retry_y <= self.mouse[1] <= self.retry_y + self.retry_height
 
-    def get_screen(self):
+
+    def get_screen(self) -> pygame.surface.Surface:
+        """Returns the screen/surface
+
+        Args:
+            None
+        
+        Returns:
+            pygame.surface.Surface: screen/surface
+        """
         return self.screen
