@@ -32,7 +32,10 @@ if __name__ == "__main__":
     app = Jirehl.Application()
     camera_obj = Patrick.Camera()
     # hitboxes = Jack.Movement()
-    # skins = Yazen.Skins()
+
+    screen = app.get_screen()
+
+    skins = Yazen.Skins(screen)
 
     # model = Model_Pygame.Model()
 
@@ -108,7 +111,7 @@ if __name__ == "__main__":
                     if app.on_confirm_button() and selected_difficulty_index > -1:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(selected_difficulty_index)
+                        game = Hitboxes.Game_play(selected_difficulty_index, screen)
                     else:
                         selected_difficulty_index = app.on_difficulty()
 
@@ -128,7 +131,7 @@ if __name__ == "__main__":
                 app.countdown()
                 counted_down = True
 
-            app.start_game(camera_obj,frame_rate_index, game)
+            app.start_game(camera_obj,frame_rate_index, game, skins)
 
             # Collision
             if not game.check_if_alive():
@@ -157,7 +160,7 @@ if __name__ == "__main__":
                     if app.on_retry_button():
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(selected_difficulty_index)
+                        game = Hitboxes.Game_play(selected_difficulty_index, screen)
                     if app.on_quit_button():
                         current_state = MAIN_MENU
                 
@@ -165,7 +168,7 @@ if __name__ == "__main__":
                     if event.key == pygame.K_SPACE:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Hitboxes.Game_play(selected_difficulty_index)
+                        game = Hitboxes.Game_play(selected_difficulty_index, screen)
 
         if current_state == PAUSE_MENU:
             app.display_pause_menu()
