@@ -32,8 +32,8 @@ if __name__ == "__main__":
     app = Jirehl.Application()
     camera_obj = Patrick.Camera()
     music_player = Patrick.Music()
-    music_player.set_volume(1.0)
-    music_player.add_song("22-01. Super Smash Bros. Brawl Main Theme.mp3")
+    music_player.set_volume(0.5)
+    # music_player.add_song("22-01. Super Smash Bros. Brawl Main Theme.mp3")
     # music_player.load_playlist(music_player.get_playlist())
     # hitboxes = Jack.Movement()
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
         if current_state == MAIN_MENU:
             app.display_main_menu(camera_obj, selected_camera_index)
-            music_player.play()
+            music_player.play(0)
 
             for event in pygame.event.get():  
                 if event.type == pygame.QUIT:  
@@ -117,6 +117,7 @@ if __name__ == "__main__":
                         current_state = GAME_PLAY
                         counted_down = False
                         game = Hitboxes.Game_play(selected_difficulty_index, screen)
+                        music_player.stop()
                     else:
                         selected_difficulty_index = app.on_difficulty()
 
@@ -138,17 +139,21 @@ if __name__ == "__main__":
 
             app.start_game(camera_obj,frame_rate_index, game, skins)
             if selected_difficulty_index == 0:
-                music_player.add_song("01 Title Theme.mp3")
-                music_player.next_song()
+                # music_player.add_song("01 Title Theme.mp3")
+                # music_player.next_song()
+                music_player.play(1)
             if selected_difficulty_index == 1:
-                music_player.add_song("1-17. Accumula Town.mp3")
-                music_player.next_song()
+                # music_player.add_song("1-17. Accumula Town.mp3")
+                # music_player.next_song()
+                music_player.play(2)
             if selected_difficulty_index == 2:
-                music_player.add_song("4-12. Battle! (Champion).mp3")
-                music_player.next_song()
+                # music_player.add_song("4-12. Battle! (Champion).mp3")
+                # music_player.next_song()
+                music_player.play(3)
             if selected_difficulty_index == 3:
-                music_player.add_song("645631_Lunar-Abyss.mp3")
-                music_player.next_song()
+                # music_player.add_song("645631_Lunar-Abyss.mp3")
+                # music_player.next_song()
+                music_player.play(4)
                 
             # Collision
             if not game.check_if_alive():
@@ -180,6 +185,7 @@ if __name__ == "__main__":
                         game = Hitboxes.Game_play(selected_difficulty_index, screen)
                     if app.on_quit_button():
                         current_state = MAIN_MENU
+                        music_player.stop()
                 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -200,6 +206,7 @@ if __name__ == "__main__":
                         counted_down = False
                     if app.on_quit_button():
                         current_state = MAIN_MENU
+                        music_player.stop()
                 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
