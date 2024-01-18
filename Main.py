@@ -31,6 +31,8 @@ frame_rate_index = 1
 if __name__ == "__main__":
     app = Jirehl.Application()
     camera_obj = Patrick.Camera()
+    music_player = Patrick.Music()
+    music_player.add_song("22-01. Super Smash Bros. Brawl Main Theme.mp3")
     # hitboxes = Jack.Movement()
 
     screen = app.get_screen()
@@ -46,6 +48,7 @@ if __name__ == "__main__":
 
         if current_state == MAIN_MENU:
             app.display_main_menu(camera_obj, selected_camera_index)
+            music_player.play()
 
             for event in pygame.event.get():  
                 if event.type == pygame.QUIT:  
@@ -132,7 +135,19 @@ if __name__ == "__main__":
                 counted_down = True
 
             app.start_game(camera_obj,frame_rate_index, game, skins)
-
+            if selected_difficulty_index == 0:
+                music_player.add("01 Title Theme.mp3")
+                music_player.next_song()
+            if selected_difficulty_index == 1:
+                music_player.add("1-17. Accumula Town.mp3")
+                music_player.next_song()
+            if selected_difficulty_index == 2:
+                music_player.add("4-12. Battle! (Champion).mp3")
+                music_player.next_song()
+            if selected_difficulty_index == 3:
+                music_player.add("645631_Lunar-Abyss.mp3")
+                music_player.next_song()
+                
             # Collision
             if not game.check_if_alive():
                 current_state = GAME_OVER
