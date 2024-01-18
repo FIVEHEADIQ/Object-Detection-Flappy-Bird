@@ -33,15 +33,11 @@ if __name__ == "__main__":
     camera_obj = Patrick.Camera()
     music_player = Patrick.Music()
     music_player.set_volume(0.5)
-    # music_player.add_song("22-01. Super Smash Bros. Brawl Main Theme.mp3")
-    # music_player.load_playlist(music_player.get_playlist())
-    # hitboxes = Jack.Movement()
 
     screen = app.get_screen()
 
     skins = Yazen.Skins(screen)
 
-    # model = Model_Pygame.Model()
 
     while True:
         if frame_rate_index < 0:
@@ -72,7 +68,6 @@ if __name__ == "__main__":
         if current_state == SELECT_CAMERA:
             app.select_camera(camera_obj, selected_camera_index)
             camera_obj.stop_camera()
-            # model.stop()
 
             for event in pygame.event.get():  
                 if event.type == pygame.QUIT:  
@@ -89,7 +84,6 @@ if __name__ == "__main__":
                         selected_camera_index = app.on_camera_option()
                     
         if current_state == CALIBRATION:
-            # model = Model_Pygame.Model(selected_camera_index) # start cam
             camera_obj.start_camera(selected_camera_index)
             app.calibrate(camera_obj, selected_camera_index,frame_rate_index)
 
@@ -139,21 +133,12 @@ if __name__ == "__main__":
 
             app.start_game(camera_obj, frame_rate_index, game, skins)
             if selected_difficulty_index == 0:
-                # music_player.add_song("01 Title Theme.mp3")
-                # music_player.next_song()
-                # music_player.play(1)
-                pass
+                music_player.play(1)
             if selected_difficulty_index == 1:
-                # music_player.add_song("1-17. Accumula Town.mp3")
-                # music_player.next_song()
                 music_player.play(2)
             if selected_difficulty_index == 2:
-                # music_player.add_song("4-12. Battle! (Champion).mp3")
-                # music_player.next_song()
                 music_player.play(3)
             if selected_difficulty_index == 3:
-                # music_player.add_song("645631_Lunar-Abyss.mp3")
-                # music_player.next_song()
                 music_player.play(4)
                 
             # Collision
@@ -217,7 +202,6 @@ if __name__ == "__main__":
 
         if current_state == SETTINGS:
             app.display_settings_menu(selected_settings_option_index)
-            # print(selected_settings_option_index)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
