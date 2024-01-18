@@ -9,7 +9,7 @@ import sys
 import pygame.camera
 from pygame.constants import MOUSEBUTTONDOWN
 from pygame.display import set_allow_screensaver
-import pygame.locals
+# import pygame.locals
 import os
 import Main
 import Patrick
@@ -79,7 +79,7 @@ class Application():
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
         self.screen.fill(self.color)
-        self.display_selected_camera(camera, selected_camera_index)
+        self.display_selected_camera_button(camera, selected_camera_index)
 
         self.display_title()
         self.display_play_button()
@@ -92,6 +92,14 @@ class Application():
 
 
     def display_title(self):
+        """Displays the title text
+        
+        Args:
+            None
+
+        Returns:
+            None
+        """
         title_text = self.bigfont.render("Pushup Flappy Bird", True, self.color)
 
         title_width = 400
@@ -106,6 +114,14 @@ class Application():
 
 
     def display_play_button(self):
+        """Displays the 'play' button
+        
+        Args:
+            None
+
+        Returns:
+            None
+        """
         play_button_text = self.bigfont.render('Play' , True , self.color)
 
         self.play_button_width = 155
@@ -136,6 +152,14 @@ class Application():
     
 
     def display_skins_button(self):
+        """Displays the 'skins' button
+        
+        Args:
+            None
+
+        Returns:
+            None
+        """
         self.skins_button_width = 155
         self.skins_button_height = 45
         self.skins_button_x = self.width/2 - self.skins_button_width/2
@@ -165,6 +189,14 @@ class Application():
 
 
     def display_settings_button(self):
+        """Displays the 'settings' button
+        
+        Args:
+            None
+
+        Returns:
+            None
+        """
         settings_button_text = self.bigfont.render("Settings", True, self.color)
 
         self.settings_button_width = 155
@@ -194,7 +226,7 @@ class Application():
         return self.settings_button_x <= self.mouse[0] <= self.settings_button_x + self.settings_button_width and self.settings_button_y <= self.mouse[1] <= self.settings_button_y + self.settings_button_height
 
 
-    def display_selected_camera(self, camera: Patrick.Camera, selected_camera_index: int):
+    def display_selected_camera_button(self, camera: Patrick.Camera, selected_camera_index: int):
         """Displays the user selected camera
 
         Args:
@@ -452,7 +484,7 @@ class Application():
         # Draw the captured frame onto the screen
         # self.screen.blit(image, (0, 0))
         model.recognize(self.screen, self.width, self.height)
-        self.display_selected_camera(camera, selected_camera_index)
+        self.display_selected_camera_button(camera, selected_camera_index)
         self.display_back_button()
         self.display_confirm_button()
 
@@ -494,7 +526,7 @@ class Application():
 
         # Change frame rate
         self.screen.fill(self.color)
-        settings_options = ["Frame rate", "Background", "Resolution", "Audio"]
+        settings_options = ["Frame rate", "Background", "Audio"] # Resolution will be a future update
         self.display_back_button()
         self.display_confirm_button()
 
@@ -527,6 +559,14 @@ class Application():
 
 
     def on_settings_option(self):
+        """Returns a list index
+        
+        Args:
+            None
+
+        Returns:
+            int: list index of settings option the mouse is on
+        """
         for i in range(0, len(self.settings_option_y_list)):
             if self.settings_option_x <= self.mouse[0] <= self.settings_option_x + self.settings_option_width and self.settings_option_y_list[i] <= self.mouse[1] <= self.settings_option_y_list[i] + self.settings_option_height:
                 # pass # Return numbers
@@ -535,6 +575,14 @@ class Application():
 
 
     def select_frame_rate(self, highlighted_frame_rate_option):
+        """Displays a screen to select a frame rate
+        
+        Args:
+            int (highlighted_frame_rate_option): list index of currently selected frame rate option
+
+        Returns:
+            None
+        """
         self.mouse = pygame.mouse.get_pos()
 
         # Change frame rate
@@ -572,7 +620,15 @@ class Application():
 
 
 
-    def on_frame_rate_option(self):
+    def on_frame_rate_option(self) -> int:
+        """Returns a list index
+        
+        Args:
+            None
+
+        Returns:
+            int: list index
+        """
         for i in range(0, len(self.frame_rate_option_y_list)):
             if self.frame_rate_option_x <= self.mouse[0] <= self.frame_rate_option_x + self.frame_rate_option_width and self.frame_rate_option_y_list[i] <= self.mouse[1] <= self.frame_rate_option_y_list[i] + self.frame_rate_option_height:
                 # pass # Return numbers
@@ -580,11 +636,19 @@ class Application():
         return -1
     
 
-    def get_frame_rate(self, index):
+    def get_frame_rate(self, index) -> int:
+        """Returns selected frame rate 
+        
+        Args:
+            None
+
+        Returns:
+            int: selected frame rate
+        """
         return int(self.frame_rates[index])
     
 
-    def start_game(self, camera: Patrick.Camera, frame_rate_index, game: Hitboxes.Game_play):
+    def start_game(self, camera: Patrick.Camera, frame_rate_index, game: Hitboxes.Game_play, skins: Yazen.Skins):
         """Start the game
 
         Args:
@@ -595,11 +659,13 @@ class Application():
         """
         self.mouse = pygame.mouse.get_pos() # (x,y) tuple
         model = camera.get_model()
- 
         model.recognize(self.screen, self.width, self.height)
-        game.bird_hitbox(self.screen, model)
 
-        game.pipe_hitboxes(self.screen)
+        game.bird_hitbox(model)
+        game.bird_skin(skins.get_bird_list()[4])
+        game.pipe_hitboxes()
+        score = self.bigfont.render(str(game.get_score()), True, self.color)
+        self.screen.blit(score, (self.width/2, self.height/20))
 
         self.display_pause_button()
 
@@ -817,6 +883,14 @@ class Application():
 
 
     def display_game_over_text(self):
+        """Displays 'Game Over' text
+        
+        Args:
+            None
+
+        Returns:
+            None
+        """
         game_over_text = self.bigfont.render("Game over", True, self.color)
 
         game_over_width = 400
@@ -835,4 +909,5 @@ class Application():
         """
         return self.retry_x <= self.mouse[0] <= self.retry_x + self.retry_width and self.retry_y <= self.mouse[1] <= self.retry_y + self.retry_height
 
-      # destination_surface.blit(source_surface, dest_position, area=None, special_flags=0)
+    def get_screen(self):
+        return self.screen
