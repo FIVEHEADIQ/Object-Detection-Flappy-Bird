@@ -1,6 +1,6 @@
 import unittest
 import pygame
-from your_module_name import Skins  # Replace 'your_module_name' with the actual module name
+from Yazen import Skins  
 
 class TestSkins(unittest.TestCase):
     def setUp(self):
