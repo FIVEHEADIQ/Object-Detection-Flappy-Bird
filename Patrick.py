@@ -1,5 +1,5 @@
 """
-Pushup Flappy Bird
+Flappy Bird Fit
 By: Patrick Liu
 https://www.programiz.com/python-programming/docstrings
 """
