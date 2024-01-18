@@ -55,36 +55,37 @@ class Music:
         music_file (str): Path in files to the music file
         """
         pygame.mixer.init()
-        self.playlist = []
-        self.current_song_index = 0
-        self.started_music = False
+        self.playlist = ["22-01. Super Smash Bros. Brawl Main Theme.mp3", "01 Title Theme.mp3", "1-17. Accumula Town.mp3", "4-12. Battle! (Champion).mp3", "645631_Lunar-Abyss.mp3"]
+        self.music_played = False
+        self.music_stopped = False
 
-    def add_song(self, music_file):
-        """
-        Add a song to the playlist.
+    # def add_song(self, music_file):
+    #     """
+    #     Add a song to the playlist.
 
-        Parameters:
-        - music_file (str): The path to the music file.
-        """
-        self.playlist.append(music_file)
+    #     Parameters:
+    #     - music_file (str): The path to the music file.
+    #     """
+    #     self.playlist.append(music_file)
+    #     print(self.playlist)
 
-    def play(self, loop=-1):
+    def play(self, index, loop=-1):
         """
         Start playing the music.
 
         Parameters:
         loop (int): Number of times to loop the music. Set to -1 for infinite loop.
         """
-        if not self.started_music:
-            pygame.mixer.music.load(self.playlist[self.current_song_index])
+        if not self.music_played:
+            pygame.mixer.music.load(self.playlist[index])
             pygame.mixer.music.play(loop)
-            self.started_music = True
+            self.music_played = True
         
-    def next_song(self):
-        """Switch to the next song in the playlist."""
-        self.stop()
-        self.current_song_index = (self.current_song_index + 1) % len(self.playlist)
-        self.play()
+    # def next_song(self):
+    #     """Switch to the next song in the playlist."""
+    #     self.stop()
+    #     self.current_song_index = (self.current_song_index + 1) % len(self.playlist)
+    #     self.play()
         
     def pause(self):
         """Pause the currently playing music."""
@@ -96,7 +97,15 @@ class Music:
 
     def stop(self):
         """Stop playing the music."""
-        pygame.mixer.music.stop()
+        if not self.music_stopped:
+            pygame.mixer.music.unload()
+            pygame.mixer.music.stop()
+            # self.music_stopped = True
+            self.music_played = False
+
+    # def reset(self):
+    #     self.music_stopped = True
+    #     pygame.mixer.music.unload()
 
     def set_volume(self, volume):
         """
