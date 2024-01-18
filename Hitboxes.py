@@ -3,7 +3,18 @@ import pygame
 import random
 
 class Game_play:
-    def __init__(self, pipe_nums, screen: pygame.surface.Surface):
+    """A class for the mechanics of the game
+    """
+    def __init__(self, pipe_nums: int, screen: pygame.surface.Surface):
+        """Constructor for Game_play class
+
+        Args:
+            int (pipe_nums): Number of pipes on the screen at once
+            pygame.surface.Surface: Screen/surface
+        
+        Returns:
+            None
+        """
         self.pipe_width = 45
         self.pipe_height = 720
         self.pipe_gap = 100
@@ -24,16 +35,40 @@ class Game_play:
         self.screen = screen
     
     def bird_hitbox(self, model: Model_Pygame.Model):
-        self.bird_y = model.get_y_pos() + 120
-        # pygame.draw.circle(self.screen, self.color, (self.bird_x, self.bird_y), 15) # 
+        """Get the bird's y position and establish the hitbox
 
-    def bird_skin(self, bird_skin):
+        Args:
+            Model_Pygame.Model (model): Model object
+
+        Returns:
+            None
+        """
+        self.bird_y = model.get_y_pos() + 120
+        # pygame.draw.circle(self.screen, self.color, (self.bird_x, self.bird_y), 15) # Hit'circle' now invisible to the player
+
+    def bird_skin(self, bird_skin: str):
+        """Display the selected bird skin
+
+        Args:
+            str (bird_skin): Name of bird png file
+
+        Returns:
+            None
+        """
         bird_skin = pygame.image.load(bird_skin)
         bird_skin = pygame.transform.scale(bird_skin, (30, 30))
         self.screen.blit(bird_skin, (self.bird_x - 15, self.bird_y - 15))
         
 
     def pipe_hitboxes(self):
+        """Establish and display pipe hitboxes
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         for i in range(0, self.pipe_nums + 1): # For every pipe
             # Initialize pipe coordinates on startup
             if self.num_resetted <= self.pipe_nums:
@@ -75,12 +110,24 @@ class Game_play:
 
             self.track_score(pipe_x, self.bird_x, self.pipe_width, passed_pipe, i)
 
-    def check_if_alive(self):
+
+    def check_if_alive(self) -> bool:
+        """Returns a bool if the player is alive
+
+        Args:
+            None
+
+        Returns:
+            bool: If the player is alive or not
+        """
         return self.is_alive
+    
 
-
-    def collision_x(self, pipe_x, bird_x, pipe_width):
+    def collision_x(self, pipe_x, bird_x, pipe_width) -> bool:
+        """Returns a bool if there is a bird-pipe collision with x values
+        """
         return pipe_x <= bird_x - 15 <= pipe_x + pipe_width or pipe_x <= bird_x + 15 <= pipe_x + pipe_width
+    
     
     def collision_y(self, pipe_gap_y, bird_y, lower_pipe_y):
         return not (pipe_gap_y <= bird_y - 15 <= lower_pipe_y) or not (pipe_gap_y <= bird_y + 15 <= lower_pipe_y)
@@ -89,21 +136,12 @@ class Game_play:
     def collision(self, pipe_x, bird_x, pipe_width, pipe_gap_y, bird_y, lower_pipe_y):
         return self.collision_x(pipe_x, bird_x, pipe_width) and self.collision_y(pipe_gap_y, bird_y, lower_pipe_y)
     
+    
     def track_score(self, pipe_x, bird_x, pipe_width, passed_pipe, i):
         if not passed_pipe and pipe_x + pipe_width < bird_x:
             self.score += 1
             self.passed_pipe_list[i] = True
 
+
     def get_score(self):
         return self.score
-    
-
-    # def track_score(self):
-    #     if self.passed_pipe == False:
-    #         if self.pipe_x + self.pipe_width/2 <= self.bird_x:
-    #             self.score += 1
-    #             self.passed_pipe = True
-    #             print(self.score)
-
-    def display_score(self):
-        pass
