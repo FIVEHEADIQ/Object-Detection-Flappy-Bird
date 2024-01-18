@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from io import StringIO
-from Patrick import Camera, Music
+from Patrick import Camera, Music  # Assuming your original file is named Patrick.py
 import pygame
 
 class TestCamera(unittest.TestCase):
