@@ -1,7 +1,7 @@
-import Jirehl
-import Patrick
-import Jack_game
-import Yazen
+import Menu
+import Camera
+import Gameplay
+import Skins
 import pygame
 import Model_Pygame
 
@@ -28,14 +28,14 @@ frame_rate_index = 1
 # Main class
 
 if __name__ == "__main__":
-    app = Jirehl.Application()
-    camera_obj = Patrick.Camera()
-    music_player = Patrick.Music()
+    app = Menu.Application()
+    camera_obj = Camera.Camera()
+    music_player = Camera.Music()
     music_player.set_volume(0.1)
 
     screen = app.get_screen()
 
-    skins = Yazen.Skins(screen)
+    skins = Skins.Skins(screen)
 
 
     while True:
@@ -109,7 +109,7 @@ if __name__ == "__main__":
                     if app.on_confirm_button() and selected_difficulty_index > -1:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Jack_game.Game_play(selected_difficulty_index, screen)
+                        game = Gameplay.Game_play(selected_difficulty_index, screen)
                         music_player.stop()
                     else:
                         selected_difficulty_index = app.on_difficulty()
@@ -167,7 +167,7 @@ if __name__ == "__main__":
                     if app.on_retry_button():
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Jack_game.Game_play(selected_difficulty_index, screen)
+                        game = Gameplay.Game_play(selected_difficulty_index, screen)
                     if app.on_quit_button():
                         current_state = MAIN_MENU
                         music_player.stop()
@@ -176,7 +176,7 @@ if __name__ == "__main__":
                     if event.key == pygame.K_SPACE:
                         current_state = GAME_PLAY
                         counted_down = False
-                        game = Jack_game.Game_play(selected_difficulty_index, screen)
+                        game = Gameplay.Game_play(selected_difficulty_index, screen)
 
         if current_state == PAUSE_MENU:
             app.display_pause_menu()

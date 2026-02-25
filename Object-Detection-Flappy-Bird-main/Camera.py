@@ -114,11 +114,11 @@ class Music:
         # Get absolute paths for each music file
         script_dir = os.path.dirname(os.path.abspath(__file__))
         self.playlist = [
-            os.path.join(script_dir, "22-01. Super Smash Bros. Brawl Main Theme.mp3"),
-            os.path.join(script_dir, "01 Title Theme.mp3"),
-            os.path.join(script_dir, "1-17. Accumula Town.mp3"),
-            os.path.join(script_dir, "4-12. Battle! (Champion).mp3"),
-            os.path.join(script_dir, "645631_Lunar-Abyss.mp3")
+            os.path.join(script_dir, "music/22-01. Super Smash Bros. Brawl Main Theme.mp3"),
+            os.path.join(script_dir, "music/01 Title Theme.mp3"),
+            os.path.join(script_dir, "music/1-17. Accumula Town.mp3"),
+            os.path.join(script_dir, "music/4-12. Battle! (Champion).mp3"),
+            os.path.join(script_dir, "music/645631_Lunar-Abyss.mp3")
         ]
         self.music_played = False
         self.music_stopped = False

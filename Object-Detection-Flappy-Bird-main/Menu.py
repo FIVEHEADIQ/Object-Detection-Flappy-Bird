@@ -6,9 +6,9 @@ By: Jirehl Ngo
 
 import pygame
 import pygame.camera
-import Patrick
-import Yazen
-import Jack_game
+import Camera
+import Skins
+import Gameplay
 
 clock = pygame.time.Clock()
 
@@ -63,13 +63,13 @@ class Application():
         pygame.display.update()
 
 
-    def display_main_menu(self, camera: Patrick.Camera, selected_camera_index: int, skins: Yazen.Skins):
+    def display_main_menu(self, camera: Camera.Camera, selected_camera_index: int, skins: Skins.Skins):
         """Displays the main menu
 
         Args:
-            Patrick.camera (camera): Camera object
+            Camera.camera (camera): Camera object
             int (selected_camera_index): List index of the user selected camera from the pygame list
-            Yazen.Skins (skins): Skins object
+            Skins.Skins (skins): Skins object
 
         Returns:
             None
@@ -216,11 +216,11 @@ class Application():
         return self.settings_button_x <= self.mouse[0] <= self.settings_button_x + self.settings_button_width and self.settings_button_y <= self.mouse[1] <= self.settings_button_y + self.settings_button_height
 
 
-    def display_selected_camera_button(self, camera: Patrick.Camera, selected_camera_index: int):
+    def display_selected_camera_button(self, camera: Camera.Camera, selected_camera_index: int):
         """Displays the user selected camera on a button
 
         Args:
-            Patrick.Camera (camera): Camera object
+            Camera.Camera (camera): Camera object
             int (selected_camera_index): List index for chosen camera
 
         Returns:
@@ -258,11 +258,11 @@ class Application():
         return self.selected_camera_x <= self.mouse[0] <= self.selected_camera_x + self.selected_camera_width and self.selected_camera_y <= self.mouse[1] <= self.selected_camera_y + self.selected_camera_height
 
 
-    def select_camera(self, camera: Patrick.Camera, highlighted_camera: int):
+    def select_camera(self, camera: Camera.Camera, highlighted_camera: int):
         """Displays a menu to select availble cameras
 
         Args:
-            Patrick.Camera (camera): Camera object
+            Camera.Camera (camera): Camera object
             int (highlighted_camera): List index of camera currently selected (not confirmed)
         
         Returns:
@@ -461,11 +461,11 @@ class Application():
         return self.confirm_x <= self.mouse[0] <= self.confirm_x + self.confirm_width and self.confirm_y <= self.mouse[1] <= self.confirm_y + self.confirm_height
 
 
-    def calibrate(self, camera: Patrick.Camera, selected_camera_index: int, frame_rate_index: int):
+    def calibrate(self, camera: Camera.Camera, selected_camera_index: int, frame_rate_index: int):
         """Displays the camera video as a test
 
         Args:
-            Patrick.Camera (camera): Camera object
+            Camera.Camera (camera): Camera object
             int (selected_camera_index): List index for selected camera
             int (frame_rate_index): List index of selected frame rate
 
@@ -638,14 +638,14 @@ class Application():
         return int(self.frame_rates[index])
     
 
-    def start_game(self, camera: Patrick.Camera, frame_rate_index: int, game: Jack_game.Game_play, skins: Yazen.Skins):
+    def start_game(self, camera: Camera.Camera, frame_rate_index: int, game: Gameplay.Game_play, skins: Skins.Skins):
         """Start the game
 
         Args:
-            Patrick.Camera (camera): Camera object
+            Camera.Camera (camera): Camera object
             int (frame_rate_index): List index of selected frame rate
             Jack.Game_play (game): Game object
-            Yazen.Skins (skins): Skins object
+            Skins.Skins (skins): Skins object
 
         Returns:
             None
