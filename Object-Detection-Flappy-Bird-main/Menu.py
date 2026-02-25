@@ -63,7 +63,7 @@ class Application():
         pygame.display.update()
 
 
-    def display_main_menu(self, camera: Camera.Camera, selected_camera_index: int, skins: Skins.Skins):
+    def display_main_menu(self, camera: Camera.Camera, selected_camera_index: int, skins: Skins.Skins, current_volume: float = 0.1):
         """Displays the main menu
 
         Args:
@@ -84,6 +84,7 @@ class Application():
         self.display_play_button()
         self.display_skins_button()
         self.display_settings_button()
+        self.display_volume_slider(current_volume)
 
         pygame.display.update()
 
@@ -388,6 +389,58 @@ class Application():
         return -1
 
 
+    def display_volume_slider(self, current_volume: float):
+        """Displays a compact volume slider in the top-right corner of any screen.
+
+        Args:
+            float (current_volume): Current volume level (0.0 to 1.0)
+
+        Returns:
+            None
+        """
+        slider_w = 120
+        slider_h = 8
+        slider_x = self.width - slider_w - 12
+        slider_y = 12
+
+        # Speaker icon label
+        vol_label = self.smallfont.render(f"VOL {int(current_volume * 100)}%", True, self.color)
+        self.screen.blit(vol_label, (slider_x, slider_y - 2))
+
+        track_y = slider_y + 14
+        # Track background
+        pygame.draw.rect(self.screen, self.color_dark, (slider_x, track_y, slider_w, slider_h), border_radius=4)
+        # Filled portion
+        filled_w = int(slider_w * current_volume)
+        pygame.draw.rect(self.screen, (100, 200, 100), (slider_x, track_y, filled_w, slider_h), border_radius=4)
+        # Knob
+        knob_x = slider_x + filled_w
+        pygame.draw.circle(self.screen, self.color_dark, (knob_x, track_y + slider_h // 2), 8)
+        pygame.draw.circle(self.screen, self.color_light, (knob_x, track_y + slider_h // 2), 5)
+
+        # Store bounds for hit-testing
+        self.vol_slider_x = slider_x
+        self.vol_slider_y = track_y
+        self.vol_slider_w = slider_w
+        self.vol_slider_h = slider_h
+
+
+    def on_volume_slider(self) -> float:
+        """Returns a new volume value (0.0–1.0) if the mouse is on the slider, else -1.
+
+        Returns:
+            float: New volume if interacting with slider, else -1
+        """
+        if not hasattr(self, 'vol_slider_x'):
+            return -1
+        mx, my = self.mouse
+        if (self.vol_slider_x <= mx <= self.vol_slider_x + self.vol_slider_w and
+                self.vol_slider_y - 12 <= my <= self.vol_slider_y + self.vol_slider_h + 12):
+            raw = (mx - self.vol_slider_x) / self.vol_slider_w
+            return max(0.0, min(1.0, raw))
+        return -1
+
+
     def display_back_button(self):
         """Displays the 'Back' button
 
@@ -489,22 +542,93 @@ class Application():
         clock.tick(self.get_frame_rate(frame_rate_index))
 
 
-    def select_skins(self):
-        """Displays the 'Skins' menu
+    def select_skins(self, skins: Skins.Skins):
+        """Displays the 'Skins' menu with a grid of selectable bird skins.
+        Clicking a skin immediately applies it and highlights it in gold.
+
+        Args:
+            Skins.Skins (skins): Skins object
+
+        Returns:
+            None
+        """
+        import os
+        self.mouse = pygame.mouse.get_pos()
+
+        self.screen.fill(self.color)
+        skins.display_background()
+
+        self.display_back_button()
+
+        title_text = self.bigfont.render("Select a Skin", True, self.color_dark)
+        self.screen.blit(title_text, (self.width / 2 - 140, self.height / 12))
+
+        bird_list = skins.get_bird_list()
+        skin_names = ["Blue Man", "Green Hat", "Pink Man", "Pixel Blue", "Pixel Yellow", "Yellow Hat"]
+        selected_skin_index = skins.get_selected_bird_index()
+
+        cols = 3
+        cell_w = 180
+        cell_h = 130
+        grid_x = self.width / 2 - (cols * cell_w) / 2
+        grid_y = self.height / 6
+
+        self.skin_rects = []
+
+        for i, bird_path in enumerate(bird_list):
+            col = i % cols
+            row = i // cols
+            x = int(grid_x + col * cell_w)
+            y = int(grid_y + row * cell_h)
+
+            rect = pygame.Rect(x, y, cell_w - 10, cell_h - 10)
+            self.skin_rects.append(rect)
+
+            # Gold = active skin, light = hovered, dark = default
+            if i == selected_skin_index:
+                pygame.draw.rect(self.screen, (255, 215, 0), rect, border_radius=8)
+            elif rect.collidepoint(self.mouse):
+                pygame.draw.rect(self.screen, self.color_light, rect, border_radius=8)
+            else:
+                pygame.draw.rect(self.screen, self.color_dark, rect, border_radius=8)
+
+            # Bird image preview
+            try:
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                skin_path = os.path.join(script_dir, *bird_path.split('/'))
+                bird_img = pygame.image.load(skin_path)
+                bird_img = pygame.transform.scale(bird_img, (50, 50))
+                self.screen.blit(bird_img, (x + cell_w // 2 - 25, y + 10))
+            except Exception:
+                placeholder = self.smallfont.render("?", True, self.color)
+                self.screen.blit(placeholder, (x + cell_w // 2, y + 20))
+
+            # Skin name label
+            label = self.smallfont.render(skin_names[i] if i < len(skin_names) else f"Skin {i}", True, self.color)
+            self.screen.blit(label, (x + 5, y + cell_h - 25))
+
+            # Checkmark on active skin
+            if i == selected_skin_index:
+                check = self.smallfont.render("✓ Active", True, (0, 180, 0))
+                self.screen.blit(check, (x + cell_w // 2 - 20, y + cell_h - 40))
+
+        pygame.display.update()
+
+
+    def on_skin_option(self) -> int:
+        """Returns the index of the skin the cursor is clicking on
 
         Args:
             None
 
         Returns:
-            None
+            int: Index of the clicked skin, or -1 if none
         """
-        self.mouse = pygame.mouse.get_pos() # (x,y) tuple
-
-        self.screen.fill(self.color)
-        
-        self.display_back_button()
-
-        pygame.display.update()
+        if hasattr(self, 'skin_rects'):
+            for i, rect in enumerate(self.skin_rects):
+                if rect.collidepoint(self.mouse):
+                    return i
+        return -1
     
 
     def display_settings_menu(self, highlighted_settings_option):
@@ -526,7 +650,7 @@ class Application():
         settings_options_text = self.bigfont.render("Settings", True, self.color_dark)
         self.screen.blit(settings_options_text, (self.width/2 - self.width/4, self.height/12))
 
-        settings_options = ["Frame rate", "Background", "Audio"] # Resolution will be a future update
+        settings_options = ["Frame rate"]  # Resolution will be a future update
 
         self.settings_option_x = self.width/2 - self.width/4
         self.settings_option_y_list = []
@@ -658,7 +782,7 @@ class Application():
         skins.display_background()
 
         game.bird_hitbox(model)
-        game.bird_skin(skins.get_bird_list()[4])
+        game.bird_skin(skins.get_bird_list()[skins.get_selected_bird_index()])
         game.pipe_hitboxes()
 
         score = self.bigfont.render(str(game.get_score()), True, self.color)
